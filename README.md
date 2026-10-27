@@ -1,2 +1,1 @@
-# PROMPT_ENGINEERING_GUID
-PROMPT_ENGINEERING_GUID
+מתוך הדרכות על AI וכלי AI שהעברתי
