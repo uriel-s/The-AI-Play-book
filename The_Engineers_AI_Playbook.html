@@ -1,0 +1,1930 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Engineer's AI Playbook</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap');
+
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --border: #2e3350;
+    --accent: #4f8ef7;
+    --accent2: #7c5af6;
+    --accent3: #34d399;
+    --text: #e2e8f0;
+    --text-muted: #8892aa;
+    --callout-bg: #1e2236;
+    --callout-border: #3a4060;
+    --table-head: #1e2440;
+    --highlight: #2a3260;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Heebo', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 15px;
+    text-align: right;
+    direction: rtl;
+  }
+
+  /* ====== LAYOUT ====== */
+  .page-wrapper {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* Sidebar TOC */
+  .toc {
+    width: 240px;
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    padding: 24px 16px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    flex-shrink: 0;
+  }
+
+  .toc h3 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .toc ul { list-style: none; }
+  .toc li { margin-bottom: 4px; }
+
+  .toc a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 13px;
+    display: block;
+    padding: 5px 10px;
+    border-radius: 6px;
+    transition: all 0.15s;
+  }
+
+  .toc a:hover { color: var(--accent); background: var(--surface2); }
+  .toc a.active { color: var(--accent); background: var(--highlight); }
+  .toc a.chapter { font-weight: 600; color: var(--text); font-size: 12.5px; }
+  .toc a.sub { padding-left: 20px; padding-right: 10px; font-size: 12px; }
+
+  /* Main content */
+  .content {
+    flex: 1;
+    max-width: 860px;
+    padding: 48px 56px;
+    overflow-x: hidden;
+  }
+
+  /* ====== HEADER ====== */
+  .doc-header {
+    background: linear-gradient(135deg, #1a2040 0%, #0f1530 100%);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px 48px;
+    margin-bottom: 48px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .doc-header::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: -60px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(79,142,247,0.15) 0%, transparent 70%);
+  }
+
+  .doc-header .tag {
+    display: inline-block;
+    background: var(--accent);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+
+  .doc-header h1 {
+    font-size: 30px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, #fff 0%, #a0b4d6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .doc-header p { color: var(--text-muted); font-size: 15px; }
+
+  /* ====== TYPOGRAPHY ====== */
+  h1 { font-size: 26px; font-weight: 800; margin: 48px 0 20px; color: #fff; border-bottom: 2px solid var(--accent); padding-bottom: 10px; text-align: right; }
+  h2 { font-size: 20px; font-weight: 700; margin: 36px 0 14px; color: #c8d8f0; text-align: right; }
+  h3 { font-size: 17px; font-weight: 600; margin: 28px 0 12px; color: #a8bce0; text-align: right; }
+
+  p { margin-bottom: 14px; color: var(--text); text-align: right; }
+  ul, ol { margin: 0 0 14px 20px; padding-right: 20px; padding-left: 0; }
+  li { margin-bottom: 6px; text-align: right; }
+
+  /* ====== CALLOUT BOX ====== */
+  .callout {
+    background: var(--callout-bg);
+    border: 1px solid var(--callout-border);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin: 20px 0;
+    position: relative;
+    border-right: 4px solid var(--accent);
+  }
+
+  .callout.tip { border-right-color: var(--accent3); }
+  .callout.warning { border-right-color: #f59e0b; }
+  .callout.info { border-right-color: var(--accent); }
+  .callout.prompt { border-right-color: var(--accent2); background: #1a1630; }
+  .callout.exercise { border-right-color: #34d399; }
+
+  .callout .callout-title {
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .callout p { margin-bottom: 8px; color: var(--text); font-size: 14px; }
+  .callout p:last-child { margin-bottom: 0; }
+  .callout ul { margin-right: 0; padding-right: 20px; }
+  .callout li { font-size: 14px; color: var(--text); }
+  .callout ol { margin-right: 0; padding-right: 20px; }
+  .callout ol li { font-size: 14px; color: var(--text); margin-bottom: 6px; }
+
+  /* ====== TABLES ====== */
+  .table-wrap { overflow-x: auto; margin: 16px 0; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  th {
+    background: var(--table-head);
+    color: var(--accent);
+    font-weight: 700;
+    padding: 12px 16px;
+    text-align: right;
+    border-bottom: 2px solid var(--border);
+  }
+
+  td {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: top;
+    text-align: right;
+  }
+
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  td strong { color: var(--accent); }
+
+  /* ====== CHAPTER HIGHLIGHT ====== */
+  .chapter-cursor {
+    background: linear-gradient(135deg, #16203a 0%, #1a1a35 100%);
+    border: 2px solid var(--accent2);
+    border-radius: 16px;
+    padding: 32px 40px;
+    margin: 40px 0;
+  }
+
+  .chapter-cursor h1 {
+    border-bottom-color: var(--accent2);
+    background: linear-gradient(135deg, #a88fff 0%, #6b9fff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* ====== DIVIDER ====== */
+  hr {
+    border: none;
+    height: 1px;
+    background: var(--border);
+    margin: 40px 0;
+  }
+
+  /* ====== SCROLL ====== */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* ====== BADGE ====== */
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--highlight);
+    color: var(--accent);
+    border: 1px solid var(--accent);
+  }
+
+  /* ====== SKILL FILE BLOCK ====== */
+  .skillfile {
+    background: #0c0f18;
+    border: 1px solid var(--border);
+    border-right: 4px solid var(--accent2);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin: 16px 0;
+    font-family: 'SF Mono', 'Consolas', 'Courier New', monospace;
+    font-size: 12.5px;
+    line-height: 1.65;
+    color: #cdd6ea;
+    direction: ltr;
+    text-align: left;
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  /* ====== RESPONSIVE ====== */
+  .toc-toggle { display: none; }
+
+  @media (max-width: 768px) {
+    .page-wrapper { flex-direction: column; }
+    .toc {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      width: 100%;
+      height: auto;
+      border-left: none;
+      border-bottom: 1px solid var(--border);
+      padding: 10px 16px;
+    }
+    .toc h3 { display: none; }
+    .toc-toggle {
+      display: block;
+      width: 100%;
+      background: var(--surface2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 14px;
+      font-family: inherit;
+      font-size: 13.5px;
+      font-weight: 600;
+      text-align: right;
+      cursor: pointer;
+    }
+    .toc-toggle::after { content: " ▾"; color: var(--text-muted); }
+    .toc.open .toc-toggle::after { content: " ▴"; }
+    .toc ul { display: none; }
+    .toc.open ul {
+      display: block;
+      max-height: 55vh;
+      overflow-y: auto;
+      margin-top: 10px;
+    }
+    .content { padding: 24px 16px; max-width: 100%; }
+    .doc-header { padding: 26px 20px; }
+    .doc-header h1 { font-size: 23px; }
+    h1 { font-size: 22px; }
+    table { font-size: 13px; }
+    th, td { padding: 8px 10px; }
+  }
+
+  /* ====== PRINT ====== */
+  @media print {
+    .toc { display: none; }
+    body { background: #fff; color: #111; }
+    .content { max-width: 100%; padding: 0; }
+    /* Dark-theme colors must be overridden — otherwise headings stay white on white paper */
+    h1, h2, h3 { color: #111; -webkit-text-fill-color: #111; border-bottom-color: #999; }
+    .doc-header {
+      background: #fff;
+      border-color: #ccc;
+    }
+    .doc-header h1 {
+      background: none;
+      -webkit-text-fill-color: #111;
+      color: #111;
+    }
+    .doc-header p, p, li, td, th, .callout, .callout p, .callout li {
+      color: #111;
+    }
+    .callout { background: #f5f5f5; border-color: #ccc; }
+    .callout.prompt { background: #f0eef8; }
+    table th { background: #eee; color: #111; }
+    .skillfile { background: #f7f7f7; color: #111; border-color: #ccc; }
+    a { color: #111; }
+  }
+
+  /* ====== FOOTNOTE ====== */
+  .footnote-block {
+    border-top: 1px solid var(--border);
+    margin-top: 24px;
+    padding-top: 12px;
+    color: var(--text-muted);
+    font-size: 12.5px;
+    line-height: 1.65;
+  }
+  sup.fn-ref {
+    color: var(--accent);
+    font-size: 10px;
+    vertical-align: super;
+  }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <!-- TOC Sidebar -->
+  <nav class="toc">
+    <h3>תוכן עניינים</h3>
+    <ul>
+      <li><a href="#opening" class="chapter">למה זה שווה את הזמן שלכם</a></li>
+      <li><a href="#intro" class="chapter">🎯 מה יש בערכה</a></li>
+
+      <li><a href="#ctx" class="chapter">הקדמה – ניהול הקשר</a></li>
+      <li><a href="#ctx-desk" class="sub">הלוח המחיק של Claude</a></li>
+      <li><a href="#ctx-mess" class="sub">כשהלוח מתמלא רע</a></li>
+      <li><a href="#ctx-manage" class="sub">ניהול הקשר ליישום מיידי</a></li>
+      <li><a href="#ctx-sessions" class="sub">ניהול סשנים בפועל</a></li>
+      <li><a href="#ctx-memory" class="sub">זיכרון בין סשנים</a></li>
+
+      <li><a href="#ch1" class="chapter">פרק 1 – עקרונות יסוד</a></li>
+      <li><a href="#ch1-1" class="sub">1.1 לכוון, לא לשאול</a></li>
+      <li><a href="#ch1-2" class="sub">1.2 כללי הזהב לפרומפט טוב</a></li>
+      <li><a href="#ch1-3" class="sub">1.3 שלד הפרומפט</a></li>
+
+      <li><a href="#ch2" class="chapter">פרק 2 – טכניקות פרומפטינג</a></li>
+      <li><a href="#ch2-1" class="sub">2.1 למידה מדוגמאות (Few-shot)</a></li>
+      <li><a href="#ch2-2" class="sub">2.2 בקשת הבהרות לפני תשובה</a></li>
+      <li><a href="#ch2-sep" class="sub">2.3 להפריד הוראה מחומר</a></li>
+      <li><a href="#ch2-idk" class="sub">2.4 רשות לומר "לא יודע"</a></li>
+      <li><a href="#ch2-3" class="sub">2.5 הנחיה שלילית</a></li>
+      <li><a href="#ch2-4" class="sub">2.6 ביקורת עצמית</a></li>
+      <li><a href="#ch2-5" class="sub">2.7 פיצול משימה לשלבים</a></li>
+      <li><a href="#ch2-6" class="sub">2.8 לבקש מ-Claude לנסח</a></li>
+      <li><a href="#ch2-7" class="sub">2.9 שילוב כמה מודלים</a></li>
+      <li><a href="#ch2-8" class="sub">2.10 מרכיבים את הכל</a></li>
+      <li><a href="#ch2-9" class="sub">2.11 טכניקות במבט אחד</a></li>
+
+      <li><a href="#ch3" class="chapter">פרק 3 – Skills</a></li>
+      <li><a href="#ch3-1" class="sub">3.1 מה זה Skill</a></li>
+      <li><a href="#ch3-2" class="sub">3.2 דמו: Skill בפעולה</a></li>
+      <li><a href="#ch3-3" class="sub">3.3 מתי לבנות Skill</a></li>
+      <li><a href="#ch3-4" class="sub">3.4 כך בונים Skill</a></li>
+      <li><a href="#ch3-5" class="sub">3.5 לעבוד בבטחה</a></li>
+
+      <li><a href="#ch4" class="chapter">פרק 4 – סוכנים</a></li>
+      <li><a href="#ch4-1" class="sub">4.1 מצ'אט לסוכן: הלולאה, רדוד ועמוק</a></li>
+      <li><a href="#ch4-2" class="sub">4.2 תת-סוכנים: ברצף, במקביל, ובוריאציות</a></li>
+      <li><a href="#ch4-3" class="sub">4.3 לכוון ולראות</a></li>
+      <li><a href="#ch4-4" class="sub">4.4 Guardrails</a></li>
+      <li><a href="#ch4-5" class="sub">4.5 תרחישים להרצה מיידית</a></li>
+
+      <li><a href="#ch5" class="chapter">פרק 5 – חיבור לעולם שלך</a></li>
+      <li><a href="#ch5-1" class="sub">5.1 מייל (Outlook)</a></li>
+      <li><a href="#ch5-2" class="sub">5.2 מסמכים וקבצים</a></li>
+      <li><a href="#ch5-3" class="sub">5.3 מה עוד קיים</a></li>
+
+      <li><a href="#ch6" class="chapter">פרק 6 – מתי לא לסמוך</a></li>
+      <li><a href="#ch6-1" class="sub">6.1 שש דרכים להשלמת חסר</a></li>
+      <li><a href="#ch6-2" class="sub">6.2 מה כן לבדוק — ואיך</a></li>
+      <li><a href="#ch6-3" class="sub">6.3 השורה התחתונה</a></li>
+
+      <li><a href="#ch7" class="chapter">פרק 7 – מעבדה: בונים Skill מאפס</a></li>
+      <li><a href="#ch7-1" class="sub">7.1 המשימה: רכיב לפי דרישות</a></li>
+      <li><a href="#ch7-2" class="sub">7.2 קודם ידנית</a></li>
+      <li><a href="#ch7-3" class="sub">7.3 בונים את ה-Skill</a></li>
+      <li><a href="#ch7-4" class="sub">7.4 שוברים ומתקנים</a></li>
+
+      <li><a href="#glossary" class="chapter">נספח – מילון מונחים</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="content">
+
+    <!-- Header -->
+    <div class="doc-header">
+      <div class="tag">R&amp;D Playbook</div>
+      <h1>The Engineer's AI Playbook</h1>
+      <p>עבודה מתקדמת · ניהול הקשר · טכניקות פרומפטינג · Skills · סוכנים וחיבורים</p>
+      <p style="margin-top:10px; font-size:12.5px; color:var(--text-muted);">נכון ליולי 2026 · ממשקי הכלים מתעדכנים תדיר — ייתכנו הבדלים קטנים ממה שתראו על המסך אצלכם</p>
+    </div>
+
+    <!-- ====== COLD OPEN ====== -->
+    <h1 id="opening">למה זה שווה את הזמן שלכם</h1>
+    <p>לכל אחד יש משימה כזו: עבודה ידנית שחוזרת שוב ושוב ולוקחת שעות — וכשעושים אותה פעמיים, מקבלים לפעמים תוצאות קצת שונות. לא כי מישהו טעה, אלא כי כל אחד עושה את זה בדרך שלו.</p>
+    <p>הנה דוגמה אחת מהצוות שלנו.</p>
+    <p><strong>המשימה</strong> — הכנת מתקן בדיקה חשמלי (ICT) ללוח מודפס:</p>
+    <ul>
+      <li>לעבור על קובץ הלוח</li>
+      <li>לאתר את נקודות הבדיקה</li>
+      <li>לבחור לכל אחת את המחט המתאימה</li>
+      <li>ועוד, ועוד.</li>
+    </ul>
+    <p><strong>מה שהיה</strong> — שעות של עבודה ידנית, גם בעזרת AI. ושני מהנדסים על אותו לוח? <strong>שתי רשימות שונות.</strong></p>
+    <p><strong>מה שאפשר לעשות במקום</strong> — לוקחים את הידע והניסיון של מהנדס ותיק, ואורזים אותם פעם אחת לכלי לשימוש חוזר. כשהתהליך יציב — אפשר לקבל תוצאה עקבית בכל הרצה.</p>
+    <p>וזה בדיוק מה שפטר עשה: לקח את הידע שצבר בשנים, וארז אותו לכלי שבנה עם Claude. עכשיו זה פשוט — מעלים את הקובץ, מקבלים Excel מוכן. <strong>דקות במקום שעות</strong>, ואותה תוצאה בכל הרצה.</p>
+    <p>ופרט אחד ששווה להחזיק לאורך כל הערכה: <strong>פטר לא מתכנת.</strong></p>
+    <p>זה לא הישג של מישהו שמבין בקוד — זו דרך עבודה שאפשר ללמוד. בפרק 3 נפתח את הכלי שבנה פטר (כולל הסקריפט שמאחוריו); במעבדה בסוף הערכה תבנו בעצמכם Skill ראשון — פשוט יותר, בלי סקריפט — שממחיש את אותו עיקרון.</p>
+
+    <hr>
+
+    <!-- Intro -->
+    <div id="intro">
+      <div class="callout info">
+        <div class="callout-title">🎯 מה יש בערכה</div>
+        <ul>
+          <li>ניהול הקשר – איך לתת ל-Claude את התנאים להצליח</li>
+          <li>טכניקות פרומפטינג (Prompt Engineering) – לנסח הוראות שמקצרות את הדרך לתוצאה טובה</li>
+          <li>Skills – לארוז משימה חוזרת פעם אחת ולהפעיל אותה שוב ושוב</li>
+          <li>סוכנים – כשה-AI לא רק עונה אלא עובד בשבילכם, ואיך שומרים על שליטה</li>
+          <li>חיבורים (קונקטורים) – מייל ומסמכים בלי העתק-הדבק</li>
+          <li>מתי <em>לא</em> לסמוך על ה-AI – איפה הכלי נשבר ואיך לאמת</li>
+        </ul>
+      </div>
+
+      <div class="callout tip">
+        <div class="callout-title">💡 יסודות בקצרה — מה כדאי להכיר לפני שמתחילים</div>
+        <p>הערכה עומדת בפני עצמה, אבל היא מניחה היכרות בסיסית עם הכלים. אם אחד מהמונחים הבאים חדש לכם — זה כל מה שצריך לדעת עליו כאן:</p>
+        <ul>
+          <li><strong>מודל</strong> — "המנוע" שעונה לכם. שלושה בגדלים שונים: <strong>Haiku</strong> (מהיר וזול, למשימות פשוטות), <strong>Sonnet</strong> (ברירת המחדל לרוב העבודה), <strong>Opus</strong> (החזק, למשימות מורכבות).</li>
+          <li><strong>Effort ו-Extended Thinking</strong> — בקרות שקובעות כמה "לעבוד" לפני שעונים. כשמצב החשיבה פעיל, Claude מנתח לעומק לפני התשובה — מומלץ למשימות שדורשות היגיון, מיותר לשאלות פשוטות.</li>
+          <li><strong>מכסה שימוש</strong> — כל תוכנית כוללת כמות שימוש מוגדרת לחלון זמן. משימות כבדות (סוכנים, מקביליות, מחקר עמוק) צורכות ממנה יותר.</li>
+          <li><strong>Project</strong> — תיקיית עבודה בצ'אט: קבוצת שיחות סביב נושא אחד, עם הקשר וקבצים קבועים שנטענים לכולן.</li>
+          <li><strong>קונקטורים (Connectors)</strong> — חיבורים ישירים של Claude למערכות שלכם (מייל, מסמכים). מורחב בפרק 5.</li>
+          <li><strong>הזיה (Hallucination)</strong> — כשחסר מידע, המודל משלים את הפער בניחוש שנשמע בטוח לחלוטין. זה הכשל המרכזי שצריך לדעת לזהות, ופרק 6 מוקדש כולו לו.</li>
+        </ul>
+        <p>המילון בסוף הערכה מרכז את כל המונחים האלה יחד עם אלה שנוספים בהמשך.</p>
+      </div>
+
+      <div class="callout info">
+        <div class="callout-title">🧭 איך להשתמש בערכה</div>
+        <ul>
+          <li><strong>מקצה לקצה</strong> — הפרקים בנויים זה על זה: ההקדמה מסבירה את העיקרון שכל השאר נשען עליו, ומשם עולים ברמת המורכבות.</li>
+          <li><strong>לפי בעיה</strong> — כל פרק עומד גם בנפרד. תוכן העניינים מימין הוא נקודת הכניסה; ההפניות בטקסט (למשל "כמו ב-3.3") מובילות לרקע שחסר.</li>
+          <li><strong>כמדף עזר</strong> — הפרומפטים בקופסאות הסגולות מוכנים להעתקה, וטבלאות הסיכום (2.11, 6.2) נועדו לחזרה מהירה בזמן עבודה.</li>
+        </ul>
+      </div>
+    </div>
+
+    <hr>
+
+    <!-- ====== INTRO CHAPTER (unnumbered) ====== -->
+    <h1 id="ctx">הקדמה: למה ניהול ההקשר משנה הכול</h1>
+    <p>לדעת אילו כלים קיימים ומה כל אחד מהם עושה — זו רק ההתחלה. השאלה הקשה יותר היא איך מוציאים מהכלים האלה תוצאה <em>טובה, ובאופן עקבי</em>. וכאן מסתתר הסוד: כמעט כל פער בין תוצאה בינונית למצוינת חוזר לדבר אחד — <strong>מה כתוב על "הלוח" של Claude ברגע שהוא עונה.</strong></p>
+    <p>הפרק הקצר הזה מסביר מה זה הלוח הזה, למה הוא מתמלא, ומה קורה כשהוא מתמלא רע. זה לא טריוויה טכנית — זה המפתח לכל מה שיבוא אחריו בערכה.</p>
+
+    <h2 id="ctx-desk">הלוח המחיק של Claude</h2>
+    <p>לכל שיחה עם Claude יש <strong>מרחב עבודה אחד</strong> — תחשבו עליו כעל לוח מחיק בחדר ישיבות. כל מה שרלוונטי לשיחה כתוב עליו:</p>
+    <ul>
+      <li>ההודעות שכתבתם</li>
+      <li>הקבצים שצירפתם</li>
+      <li>וגם כל מה ש-Claude עצמו ענה עד עכשיו</li>
+    </ul>
+    <p>מה שכתוב על הלוח — זה מה שכל מי שבחדר מתייחס אליו; <strong>מה שלא כתוב שם — לא קיים.</strong> Claude לא רואה את המסך שלכם, לא זוכר שיחות קודמות, ולא יודע שום דבר שלא נכתב על הלוח. המונח המקצועי ללוח הזה הוא <strong>חלון ההקשר</strong> (Context Window).</p>
+    <p>שתי תכונות שלו חשובות במיוחד:</p>
+    <ul>
+      <li>בכל פעם שאתם שולחים הודעה, Claude קורא מחדש את <em>כל</em> הלוח — מההתחלה. אין לו "זיכרון" נפרד; <strong>ההקשר הוא הזיכרון.</strong></li>
+      <li>ללוח יש <strong>גבול גודל</strong>. הוא גדול — אבל לא גדל: בשלב מסוים, כדי לכתוב משהו חדש, משהו ישן נמחק או נדחק מהקצה.</li>
+    </ul>
+    <p>(היחידה שבה נמדד המקום על הלוח נקראת <strong>טוקן</strong> (Token) — בערך מילה או חלק ממילה. אין צורך לספור טוקנים; רק כדאי לזכור שהמילה הזו פירושה "כמה מקום זה תופס".)</p>
+
+    <h2 id="ctx-mess">כשהלוח מתמלא רע — הצרות המוכרות</h2>
+    <p>כאן מגיע דבר לא-אינטואיטיבי שכדאי להפנים: <strong>"יותר הקשר" זה לא תמיד "יותר טוב".</strong> האינסטינקט אומר "אם אדחוס את כל המידע, Claude יבין טוב יותר" — אבל לרוב ההפך קורה. ככל שיש יותר רעש על הלוח, כך קשה יותר ל-Claude לזהות מה ה<strong>אות</strong> — ההוראה האמיתית שלכם. לוח ממוקד מנצח לוח עמוס, כמעט תמיד.</p>
+    <p>כשההקשר מתנפח או מתלכלך, מופיעות כמה תקלות מוכרות:</p>
+
+    <div class="table-wrap">
+      <table>
+        <tr><th>התופעה</th><th>מה קורה בפועל</th></tr>
+        <tr>
+          <td><strong>הזיות</strong><br><span style="color:var(--text-muted)">(Hallucinations)</span></td>
+          <td>כשחסר ל-Claude מידע — או שהוא קבור עמוק מדי על הלוח — הוא נוטה למלא את החסר בניחוש שנשמע בטוח לחלוטין. זה לא שקר מכוון; זו השלמת פערים. <em>איך מזהים ומאמתים — פרק "מתי לא לסמוך" מוקדש לכך במלואו.</em></td>
+        </tr>
+        <tr>
+          <td><strong>בלבול ואיבוד חוט</strong></td>
+          <td>בשיחה ארוכה ומפותלת, פרטים שנאמרו מזמן נדחקים או מאבדים משקל. Claude "שוכח" החלטה שסיכמתם בהתחלה, או מערבב בין נושאים שונים שדנתם בהם.</td>
+        </tr>
+        <tr>
+          <td><strong>הרעלת הקשר</strong><br><span style="color:var(--text-muted)">(Context Poisoning)</span></td>
+          <td>טעות אחת מוקדמת — הנחה שגויה, קובץ לא נכון, הוראה סותרת — נשארת על הלוח וממשיכה להשפיע על כל מה שבא אחריה. שיחה "מורעלת" לא מבריאה לבד.</td>
+        </tr>
+        <tr>
+          <td><strong>הזרקת פרומפט</strong><br><span style="color:var(--text-muted)">(Prompt Injection)</span></td>
+          <td>תוכן שאתם מביאים פנימה (קובץ, הדבקה, דף מהרשת) יכול להכיל "הוראות" נסתרות ש-Claude עלול לבצע כאילו הגיעו מכם. <em>נרחיב על כך באבטחת Skills (3.5).</em></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="callout warning">
+      <div class="callout-title">⚠️ הסימן שכדאי לזהות</div>
+      <p>כשתשובות מתחילות "לסטות" — Claude חוזר על עצמו, מתעלם מהוראה שנתתם, או נשמע בטוח לגבי משהו שגוי — לרוב זה <strong>לא</strong> "תקלה בכלי". זה סימן שהלוח עמוס או מלוכלך. אל תילחמו בשיחה כדי "לתקן" אותה — כמעט תמיד מהיר יותר לפתוח שיחה נקייה.</p>
+    </div>
+
+    <h2 id="ctx-manage">ניהול הקשר — ליישום מיידי</h2>
+    <p>החדשות הטובות: ניהול הקשר הוא הרגל, לא טכניקה מסובכת. ארבעה כללים פשוטים:</p>
+    <ul>
+      <li><strong>שיחה חדשה לנושא חדש.</strong> אל תגררו דיון בן שעתיים על נושא א' לתוך שאלה על נושא ב'. לוח נקי = התחלה נקייה.</li>
+      <li><strong>הקשר ממוקד מנצח הקשר מקסימלי.</strong> תנו את הקבצים והפרטים הרלוונטיים — לא את הכול "ליתר ביטחון".</li>
+      <li><strong>שיחה שהשתבשה? אל תילחמו בה.</strong> פתחו שיחה חדשה, והביאו אליה סיכום קצר ונקי של מה שצריך. מהיר יותר מלנסות לנקות לוח מלוכלך.</li>
+      <li><strong>שימו לב למה שאתם מדביקים ומעלים.</strong> כל דבר שנכתב על הלוח הופך לחלק ממה ש-Claude מתייחס אליו — לטוב ולרע.</li>
+    </ul>
+
+    <div class="callout tip">
+      <div class="callout-title">💡 ניהול הקשר במשפט אחד</div>
+      <p>לפני ששולחים, שאלו את עצמכם: <strong>"מה צריך להיות על הלוח כדי שזה יצליח?"</strong> — ואז שימו שם את זה, ורק את זה.</p>
+    </div>
+
+    <h2 id="ctx-sessions">ניהול סשנים בפועל — המהלכים והפקודות</h2>
+    <p>ארבעת הכללים למעלה עונים על ה"מתי" — מתי לפתוח שיחה (סשן) חדשה. השאלות שנשארות פתוחות הן של ה"איך": איך עוברים סשן בלי לאבד את מה שנבנה? ומה עושות פקודות כמו compact ששומעים עליהן? וכשיש ל-Claude זיכרון — מה בעצם הוא זוכר? ארבעה מהלכים סוגרים את זה.</p>
+
+    <h3>מהלך 1: סיכום מסירה — לעבור סשן בלי לאבד כלום</h3>
+    <p>החשש המוכר מפתיחת שיחה חדשה: "אבל בניתי שם המון הקשר". הפתרון פשוט — לפני שעוזבים, בקשו מ-Claude <strong>עצמו</strong> לארוז את מה שחשוב. הוא מכיר את השיחה, אז תנו לו לכתוב את פתק המסירה; אתם רק עוברים עליו, מתקנים אם צריך, ומדביקים אותו כהודעה הראשונה בסשן החדש. עובד בכל כלי — Claude Desktop, Cowork ו-Cursor — בלי שום פקודה.</p>
+    <div class="callout prompt">
+      <div class="callout-title">💬 פרומפט המסירה</div>
+      <p><em>"אני עומד להמשיך את העבודה בשיחה חדשה. סכם עבורי בקצרה: (1) מה המשימה והמטרה; (2) אילו החלטות קיבלנו ולמה; (3) מה כבר נעשה; (4) מה הצעד הבא. נסח כהודעת פתיחה שאדביק בשיחה החדשה."</em></p>
+    </div>
+    <p>ואם השיחה הידרדרה בגלל ניסוח לא מוצלח לפני כמה הודעות — יש קיצור דרך: <strong>עריכה של אותה הודעה</strong> מחזירה את השיחה לאותה נקודה, כאילו כל מה שבא אחריה נמחק מהלוח.</p>
+
+    <p style="color:var(--text-muted); font-size:14px;">📖 <em>מהלך 2 רלוונטי רק ל-Claude Code (כלי פיתוח) — לא ל-Claude Desktop. אם אתם עובדים בצ'אט הרגיל, דלגו למהלך 3.</em></p>
+    <h3>מהלך 2: הפקודות — למי שעובד ב-Claude Code</h3>
+    <p>בצ'אט הרגיל (Claude Desktop) אין פקודות ניהול-שיחה כאלה — ולא צריך: שיחה חדשה + סיכום מסירה עושים את העבודה. ב-<strong>Claude Code</strong> יש פקודות ייעודיות לניהול הלוח — מקלידים / ורואים את כולן. ארבע ששווה להכיר:</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>פקודה</th><th>מה היא עושה</th><th>מתי</th></tr>
+        <tr><td><code dir="ltr">/context</code></td><td>מציגה מה ממלא את הלוח וכמה מקום נשאר</td><td>כשהכלי נהיה איטי או מבולבל — קודם בודקים</td></tr>
+        <tr><td><code dir="ltr">/compact</code></td><td>מסכמת את השיחה ומחליפה את ההיסטוריה בסיכום: הלוח מתפנה, הכיוון נשמר</td><td>באמצע משימה ארוכה שרוצים להמשיך</td></tr>
+        <tr><td><code dir="ltr">/clear</code></td><td>לוח נקי לגמרי</td><td>משימה חדשה — זו ברירת המחדל</td></tr>
+        <tr><td><code dir="ltr">/resume</code></td><td>חזרה לשיחה קודמת</td><td>כשסגרתם משהו מוקדם מדי</td></tr>
+      </table>
+    </div>
+    <div class="callout info">
+      <div class="callout-title">🕐 compact או clear? כלל אצבע אחד</div>
+      <p><strong>ממשיכים את אותה משימה והלוח מתמלא → <code dir="ltr">/compact</code>. עוברים למשימה אחרת → <code dir="ltr">/clear</code> או שיחה חדשה.</strong> דחיסה שומרת המשכיות אבל תמיד מאבדת פרטים — למשימה חדשה, לוח נקי מנצח לוח דחוס. טיפ: אפשר לומר ל-compact מה לשמר, למשל <em>"/compact שמור את החלטות התכן ורשימת הקבצים שבעבודה"</em>.</p>
+    </div>
+    <div class="callout warning">
+      <div class="callout-title">⚠️ הדחיסה האוטומטית היא רשת ביטחון, לא שיטת עבודה</div>
+      <p>כשהלוח מתמלא עד הסוף הכלים דוחסים אותו לבד — אבל רק כשהמצב כבר קריטי, והסיכום עלול לאבד בדיוק את הפרט שחשוב לכם. לכן: החלטות קריטיות שומרים במסמך, ואם משהו חשוב "נעלם" אחרי דחיסה — פשוט אמרו אותו שוב.</p>
+    </div>
+
+    <h3>מהלך 3: מה שצריך בכל סשן — לא מדביקים כל פעם</h3>
+    <p>אם אתם מוצאים את עצמכם פותחים כל סשן באותה הדבקה (מי אתם, איך לפרמט את הפלט, אילו כללים לשמור) — המידע הזה לא צריך לחיות בהודעות, אלא במקום קבוע — ויש שניים כאלה: מה שנכון <strong>תמיד</strong> (מי אתם, כללי פורמט) שייך להוראות הפרויקט; נוהל שנחוץ רק <strong>במשימות מסוימות</strong> שייך ל-<strong>Skill</strong> (פרק 3), שנשלף אוטומטית כשהבקשה מתאימה. כך פתיחת סשן חדש מפסיקה להיות "להתחיל מאפס" — ורוב הפחד מהלוח הנקי נעלם.</p>
+    <div class="callout tip">
+      <div class="callout-title">💡 מה שלא נמחק מהלוח</div>
+      <p>כל שיחה חדשה מתחילה מלוח נקי — וזה בדרך כלל יתרון. אבל יש דברים שדווקא כן רוצים שיהיו שם בכל פעם: מי אתם, באיזה תחום אתם עובדים, איך אתם רוצים לקבל תשובות. במקום להדביק אותם מחדש בכל שיחה (ולמלא בהם את הלוח כל פעם) — כותבים אותם פעם אחת במקום קבוע, והם עולים על הלוח אוטומטית:</p>
+      <ul>
+        <li><strong>ב-Claude Desktop</strong> — הוראות הפרויקט. כל שיחה בתוך הפרויקט נפתחת איתן.</li>
+        <li><strong>ב-Claude Code</strong> — קובץ בשם <code dir="ltr">CLAUDE.md</code> שנטען בתחילת כל סשן.</li>
+      </ul>
+      <p>אותו רעיון בדיוק, שתי סביבות. לשכבה הקבועה הזו קוראים <em>System Prompt</em> (פרומפט מערכת) — ואם שמעתם את המונח, זה מה שהוא.</p>
+    </div>
+
+    <h3 id="ctx-memory">מהלך 4: זיכרון — כשלא רוצים למסור ידנית בכל פעם</h3>
+    <div class="callout tip">
+      <div class="callout-title">💡 המזכיר שמכיר אתכם — לא הפרוטוקול של הישיבה</div>
+      <p>הזיכרון הוא כמו מזכיר ותיק שכבר יודע איך אתם עובדים: הוא לא יבקש מכם להציג את עצמכם מחדש בכל בוקר. אבל הוא גם לא ישב אתכם בישיבה ולא רשם מה הוחלט בה — בשביל זה יש פרוטוקול. <strong>הזיכרון פותר את "מי אני"; סיכום המסירה פותר את "איפה עצרנו".</strong></p>
+    </div>
+    <p>שלושת המהלכים הקודמים דורשים מכם לעשות משהו: לבקש מסירה, להקליד פקודה, לבנות Skill. <strong>הזיכרון</strong> עובד בלעדיכם: תוך כדי השיחות, Claude שומר פריטי זיכרון — מי אתם, במה אתם עוסקים, איך אתם אוהבים לקבל תשובות — ומביא אותם איתו לכל שיחה חדשה. הפריטים מתעדכנים תוך כדי שיחה, לא בסבב יומי. (הפרטים המדויקים משתנים בין תוכניות וגרסאות — מה שנשמר אצלכם תמיד גלוי בהגדרות.)</p>
+    <p>חשוב להבין מה זה <em>לא</em>: הזיכרון לוכד <strong>העדפות ועובדות</strong> — לא החלטות, לא תוצרים ולא את שרשרת הנימוקים שהובילה אליהם. הוא יידע שאתם עובדים על פרויקט מסוים; הוא לא יידע למה בחרתם ביום שלישי בגישה א' על פני ב'. לכן הוא חוסך את החלק המשעמם (מי אני ומה אני עושה), ומשאיר לכם למסור רק את מה שבאמת נבנה בסשן.</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>איך ההקשר שורד</th><th>מה נשמר</th><th>מתי זה הכלי הנכון</th></tr>
+        <tr>
+          <td><strong>סיכום מסירה</strong> (מהלך 1)</td>
+          <td>ההחלטות, מה נעשה, מה הצעד הבא</td>
+          <td>סשן ספציפי שממשיכים מחר. חד-פעמי וידני.</td>
+        </tr>
+        <tr>
+          <td><strong>Skill או פרויקט</strong> (מהלך 3)</td>
+          <td>כללי עבודה קבועים, פורמט, חומרי רקע</td>
+          <td>מה שחוזר בכל פעם. אתם מחליטים מה נכנס.</td>
+        </tr>
+        <tr>
+          <td><strong>זיכרון</strong></td>
+          <td>מי אתם והעדפות עבודה</td>
+          <td>רקע כללי שלא בא לכם להקליד שוב. עובד לבד.</td>
+        </tr>
+      </table>
+    </div>
+
+    <p><strong>איך מדליקים — ואיך אומרים לו מה לזכור.</strong> ההגדרות נמצאות ב-<strong>Settings ← Capabilities</strong>, ושם שני מתגים שעובדים כצמד: אחד מרשה ל-Claude לחפש בשיחות הקודמות שלכם, והשני מרשה לו לבנות מהן את הזיכרון. באותו מקום אפשר גם <strong>לראות ולערוך</strong> את מה שנשמר — וזו הרגלה ששווה לעשות פעם בכמה שבועות, בעיקר בהתחלה.</p>
+    <p>ולא חייבים לחכות שיסיק לבד. אפשר פשוט לומר, באמצע כל שיחה: <em>"זכור שאני עובד בצוות R&amp;D ושאני מעדיף תשובות קצרות עם טבלה"</em> — וזה נשמר מיד כפריט זיכרון. שימו לב שיש תקרה למספר הפריטים שאפשר לשמור ככה ולאורך של כל אחד, אז שמרו את זה למה שבאמת חוזר בכל שיחה — לא לפרטים של משימה אחת.</p>
+    <div class="callout info">
+      <div class="callout-title">🕐 למה הוא "שוכח" בפרויקט? כי הזיכרון מופרד</div>
+      <p>לכל פרויקט יש מרחב זיכרון משלו, נפרד משאר הפרויקטים ומהשיחות הרגילות. זו לא תקלה אלא הפרדה מכוונת — כדי שהקשר מעבודה אחת לא ידלוף לאחרת. המסקנה המעשית: מה ש-Claude צריך לדעת <em>בכל מקום</em> (התפקיד שלכם, סגנון התשובות) — אמרו לו במפורש בשיחה רגילה. מה ששייך לעבודה מסוימת — מקומו בפרויקט עצמו, לא בזיכרון הכללי.</p>
+    </div>
+    <div class="callout warning">
+      <div class="callout-title">⚠️ מה שלא נכנס לזיכרון</div>
+      <p>הזיכרון נבנה מהשיחות שלכם — ולכן כל מה שהקלדתם עשוי לחזור בשיחה עתידית, גם כזו שאינה קשורה. אל תשתילו בו פרטים מזהים של לקוחות, מידע תחת חובת סודיות או כל דבר שלא הייתם רוצים שיצוץ שבוע אחרי. לשיחה חד-פעמית שעדיף שלא תיכנס להיסטוריה או לזיכרון — יש מצב שיחה פרטי (Incognito). שימו לב: בחשבון ארגוני השיחה עדיין עשויה להישמר לצורכי compliance לפי מדיניות הארגון — זה לא "בלי עקבות". וכמו תמיד: מדיניות החברה שלכם קודמת להגדרות של הכלי.</p>
+    </div>
+    <p style="color:var(--text-muted); font-size:14px;">📖 <em>הקטע הבא רלוונטי בעיקר למי שעובד ב-Claude Code. קובץ <code dir="ltr">CLAUDE.md</code> לא קיים ב-Claude Desktop — אל תחפשו אותו שם. כל השאר — מוזמנים לדלג עד סוף ההקדמה, לא תפספסו כלום.</em></p>
+    <p><strong>וב-Claude Code הרעיון זהה — רק שהזיכרון הוא קובץ.</strong> במקום פריטי זיכרון שנשמרים ברקע, יש קובץ טקסט פשוט (מוכר בשם <code dir="ltr">CLAUDE.md</code>) שנטען אוטומטית בתחילת כל סשן ומכיל את מה שקבוע: מוסכמות, החלטות, מה כבר נעשה. היתרון הגדול — אתם רואים בדיוק מה כתוב בו ויכולים לערוך אותו כמו כל מסמך. ולא צריך לכתוב אותו מאפס: הפקודה <code dir="ltr">/init</code> שולחת את Claude לסרוק את הפרויקט ולהכין טיוטה שכבר מכילה את מה שהוא הבין — ואתם רק עוברים ומאשרים. (ב-<strong>Cursor</strong> יש מנגנון מקביל בשם <em>Rules</em> — הרעיון דומה, אך הקבצים והפקודות שונים; מה שמתואר כאן נכון ל-Claude Code.)</p>
+    <p>והנקודה שכדאי להכיר גם אם אתם לא בכלים האלה: <strong>הקובץ הזה קיים בכמה רמות בו-זמנית</strong>, בדיוק כמו שבארגון יש נהלים ברמות שונות —</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>הרמה</th><th>מה נכנס בה</th><th>מי מושפע</th></tr>
+        <tr>
+          <td><strong>ארגונית</strong></td>
+          <td>כללי החברה — תקנים, מדיניות אבטחה, מה אסור</td>
+          <td>כל מי שעובד בארגון. מוגדר ע"י IT.</td>
+        </tr>
+        <tr>
+          <td><strong>פרויקט</strong></td>
+          <td>מוסכמות העבודה הזו, מבנה, החלטות שהתקבלו</td>
+          <td>כל הצוות — הקובץ יושב בתיקיית הפרויקט ומשותף.</td>
+        </tr>
+        <tr>
+          <td><strong>אישית</strong></td>
+          <td>איך <em>אתם</em> אוהבים לעבוד, בכל הפרויקטים</td>
+          <td>רק אתם.</td>
+        </tr>
+      </table>
+    </div>
+    <p>הרמות <strong>מצטברות</strong> — כולן נטענות יחד, לא מחליפות זו את זו. (בפועל יש גם כללי קדימות: מדיניות ארגונית מנוהלת יכולה לגבור על רמה אישית — אבל לרוב העבודה היומיומית, המודל "כולן יחד" מספיק.) וזה בדיוק הכוח שבהן: מה שנכון לכל הארגון נכתב פעם אחת ברמה הארגונית, מה שנכון לצוות עובר עם הפרויקט לכל מי שמצטרף אליו, וההעדפות האישיות שלכם נוסעות איתכם בין כל העבודות. הפקודה <code dir="ltr">/memory</code> מציגה בדיוק אילו קבצים נטענו כרגע ומאיזו רמה, וזו הדרך המהירה לענות על "רגע, למה הוא מתנהג ככה?". ולא חייבים לפתוח את הקובץ כדי להוסיף לו: שורה שמתחילה ב-<code dir="ltr">#</code> באמצע העבודה נשמרת לזיכרון על המקום — והכלי ישאל אתכם לאיזו רמה לשמור אותה. זו המקבילה המדויקת ל"זכור ש..." של הצ'אט.</p>
+    <p>ובנוסף לקבצים שאתם כותבים, Claude מנהל שם גם <strong>מחברת משלו</strong>: הוא שומר לעצמו הערות תוך כדי עבודה — מה עובד, מה נכשל, איך בנוי הפרויקט — ומביא אותן לסשנים הבאים. זו בדיוק המקבילה לזיכרון האוטומטי בצ'אט, רק שכאן אפשר לפתוח ולראות מה נשמר. אם אתם עובדים בכלים האלה, שווה להתחיל מקובץ פרויקט אחד ולתחזק אותו; ואם לא — דעו שזו האפשרות שקיימת שם.</p>
+    <div class="callout info">
+      <div class="callout-title">🕐 איך יודעים שהזיכרון באמת עבד?</div>
+      <p>שמרתם משהו ו-Claude ענה נכון — אבל רגע: אולי הוא ענה נכון פשוט כי אמרתם לו את זה לפני שתי הודעות, והמידע עדיין על הלוח? הבדיקה פשוטה: פתחו שיחה חדשה לגמרי, ואז שאלו שוב. אם התשובה חזרה — היא הגיעה מהזיכרון. אם לא — היא כל הזמן הגיעה מההיסטוריה, והזיכרון ריק. זה אותו הרגל בדיוק שנלמד בפרק 6: לא להניח שזה עבד — לבדוק.</p>
+    </div>
+
+    <p>וזה בדיוק מה שכל שאר הערכה בא ללמד — איך לנהל את הלוח הזה היטב, שלב אחרי שלב:</p>
+    <ul>
+      <li><strong>לכוון ולנסח</strong> (פרקים 1–2) — מה כותבים על הלוח, ואיך.</li>
+      <li><strong>Skills</strong> (פרק 3) — איך אורזים לוח טוב <em>פעם אחת</em>, ומפעילים אותו שוב ושוב.</li>
+      <li><strong>סוכנים</strong> (פרק 4) — כשה-AI מנהל את הלוח בעצמו לאורך משימה, ואיך שומרים על שליטה.</li>
+      <li><strong>חיבורים</strong> (פרק 5) — להכניס את המייל והמסמכים שלכם ללוח, בלי העתק-הדבק.</li>
+      <li><strong>מתי לא לסמוך</strong> (פרק 6) — לזהות ולאמת כשמה שעל הלוח הוביל לתוצאה שגויה.</li>
+    </ul>
+
+    <hr>
+
+    <!-- ====== CHAPTER 1 ====== -->
+    <h1 id="ch1">פרק 1: עקרונות יסוד — לעבוד נכון עם צ'אט AI</h1>
+    <p>לפני הטכניקות והכלים (שיגיעו בפרקים הבאים), יש כמה עקרונות שמשנים את כל אופן העבודה. אם תיקחו מהפרק הזה משפט אחד, שיהיה זה: <strong>איכות העבודה עם AI נקבעת הרבה פחות מ"כמה הכלי חכם", והרבה יותר מ"כמה טוב כיווַנתם אותו".</strong></p>
+
+    <div class="callout info">
+      <div class="callout-title">🎯 מטרות הפרק</div>
+      <ul>
+        <li>לעבור מ<strong>לשאול</strong> ל<strong>לכוון</strong> — שינוי הגישה שמזיז הכי הרבה</li>
+        <li>ארבעת <strong>כללי הזהב</strong> לפרומפט שמחזיר תוצאה טובה</li>
+        <li><strong>שלד הפרומפט</strong> (תפקיד · הקשר · משימה · פורמט) — תבנית שממלאים, לא ממציאים</li>
+      </ul>
+    </div>
+
+    <h2 id="ch1-1">1.1 לכוון, לא לשאול</h2>
+    <p>האינסטינקט הראשון הוא להתייחס ל-Claude כמו ל-Google: שאלה אחת, תשובה אחת, קח-או-עזוב. זו הטעות שמשאירה אנשים ברמת תוצאות בינונית. עם Claude אתם לא <em>שואלים</em> — אתם <em>מכווְנים</em>: בעמדת הנהג, מובילים עוזר חכם דרך תהליך עד לתוצאה שרציתם.</p>
+
+    <div class="callout tip">
+      <div class="callout-title">💡 אנלוגיה: עוזר חכם — אבל מילולי</div>
+      <p>חשבו על Claude כמו מהנדס זוטר שהצטרף היום: מהיר, יודע המון — אבל <strong>מילולי</strong>, ולא קורא לכם את המחשבות. הוא יעשה בדיוק מה שביקשתם, לא מה שהתכוונתם. הנחיה מעורפלת → תוצאה מעורפלת; כיוון טוב → עבודה מצוינת.</p>
+    </div>
+
+    <h2 id="ch1-2">1.2 כללי הזהב לפרומפט טוב</h2>
+    <p>"פרומפט" (prompt) זו ההנחיה שאתם נותנים ל-Claude. ארבעה כללים הופכים הנחיה רגילה להנחיה שמחזירה תוצאה טובה:</p>
+
+    <h3>כלל 1: תנו הקשר</h3>
+    <p>Claude יודע רק מה שאתם אומרים לו — הוא לא רואה את המסך ולא מכיר את הפרויקט. ספרו לו מי אתם, מה המטרה ולמי זה מיועד. <strong>בלי הקשר, Claude מנחש.</strong></p>
+
+    <div class="callout prompt">
+      <div class="callout-title">💬 בלי הקשר מול עם הקשר</div>
+      <p><strong>חלש:</strong> <em>"תכתוב מייל על העיכוב."</em></p>
+      <p><strong>טוב:</strong> <em>"אני מהנדס בצוות R&amp;D. תכתוב מייל קצר ללקוח שמסביר על עיכוב של שבוע באספקה בגלל רכיב חסר, בטון מקצועי ומרגיע."</em></p>
+    </div>
+
+    <h3>כלל 2: ברורים — אבל במידה הנכונה</h3>
+    <p>הנחיה <strong>כללית מדי</strong> משאירה ל-Claude יותר מדי לנחש (תוצאה גנרית); הנחיה <strong>מפורטת מדי</strong> שמכתיבה כל מילה — מבזבזת את זמנכם וחונקת את מה שהכלי טוב בו. הנקודה המתוקה: <strong>אמרו מה המטרה והאילוצים, והשאירו ל-Claude את ה"איך".</strong></p>
+
+    <div class="table-wrap">
+      <table>
+        <tr><th>סוג ההנחיה</th><th>דוגמה</th><th>התוצאה</th></tr>
+        <tr><td><strong>כללית מדי</strong></td><td>"תעזור לי עם הדו"ח"</td><td>Claude מנחש — יוצא גנרי</td></tr>
+        <tr><td><strong>מפורטת מדי</strong></td><td>מכתיבים משפט-משפט מה לכתוב</td><td>עשיתם את העבודה בעצמכם</td></tr>
+        <tr><td><strong>נכונה</strong></td><td>"סכם את דו"ח הבדיקה ל-5 נקודות למנהל לא-טכני, הדגש חריגות"</td><td>מטרה ואילוצים ברורים, ה"איך" ל-Claude</td></tr>
+      </table>
+    </div>
+
+    <h3>כלל 3: בקשו את צורת הפלט</h3>
+    <p>אל תשאירו את הפורמט למקרה. רוצים טבלה — בקשו טבלה; תשובה קצרה — "בשורה אחת"; מייל — "נסח כמייל". Claude ייתן בדיוק את הצורה שביקשתם, אבל הוא צריך לדעת מהי.</p>
+
+    <h3>כלל 4: זה תהליך, לא תשובה אחת</h3>
+    <p>הטעות הכי נפוצה: לקבל תשובה ראשונה לא-מושלמת ולוותר. אבל היא <strong>טיוטה</strong>, לא פסק דין. הכוח האמיתי בשיחה — לכוונן, לתקן, לבקש עוד — עד למה שרציתם.</p>
+
+    <div class="callout prompt">
+      <div class="callout-title">💬 לבקש צורה ולכוונן תוך כדי</div>
+      <p><em>"תן לי את ההשוואה כטבלה: אפשרות, יתרון, חיסרון."</em><br>
+      <em>"קצר מדי — תרחיב את הסעיף השני."</em><br>
+      <em>"הטון רשמי מדי, תעשה אותו ידידותי יותר."</em></p>
+    </div>
+
+    <div class="callout warning">
+      <div class="callout-title">⚠️ אל תוותרו על תשובה ראשונה חלשה</div>
+      <p>תשובה ראשונה בינונית היא לרוב סימן שההנחיה היתה כללית מדי — לא שהכלי לא מסוגל. כווְנו: אמרו מה חסר, מה לתקן ובאיזו צורה. שתיים-שלוש איטרציות מביאות אתכם רחוק.</p>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-title">💡 ארבעת כללי הזהב — במבט אחד</div>
+      <ul>
+        <li><strong>הקשר</strong> — מי אתם, מה המטרה, למי זה מיועד.</li>
+        <li><strong>ברור במידה הנכונה</strong> — מטרה ואילוצים כן, הכתבת כל מילה לא.</li>
+        <li><strong>צורת פלט</strong> — טבלה / נקודות / מייל / אורך.</li>
+        <li><strong>תהליך</strong> — התשובה הראשונה היא טיוטה; כווְנו עד התוצאה.</li>
+      </ul>
+      <p>וכולם אותו דבר: <strong>לכוון, לא לשאול.</strong></p>
+    </div>
+
+    <h2 id="ch1-3">1.3 שלד הפרומפט — מחברים את הכל לתבנית</h2>
+    <p>ארבעת כללי הזהב הם עקרונות. הנה איך הופכים אותם למשהו שאפשר פשוט למלא: <strong>שלד</strong> של ארבעה חלקים שמכסה את רוב הפרומפטים היומיומיים. לא חייבים את כולם בכל פעם — אבל ככל שתמלאו יותר חלקים, התוצאה מדויקת יותר.</p>
+
+    <div class="table-wrap">
+      <table>
+        <tr><th>חלק</th><th>מה שמים שם</th><th>דוגמה</th></tr>
+        <tr><td><strong>תפקיד</strong></td><td>מי Claude צריך להיות בשביל המשימה</td><td>"אתה מהנדס בדיקות (QA) מנוסה"</td></tr>
+        <tr><td><strong>הקשר</strong></td><td>מי אתם, מה המטרה, למי זה מיועד</td><td>"אני מכין סקירת עמיתים לתכנון כרטיס בקרה"</td></tr>
+        <tr><td><strong>משימה</strong></td><td>מה בדיוק לעשות</td><td>"אתר שלוש בדיקות חסרות שהיית מצפה לראות"</td></tr>
+        <tr><td><strong>פורמט</strong></td><td>באיזו צורה שיחזיר</td><td>"טבלה: שם הבדיקה, מה היא מכסה, רמת סיכון"</td></tr>
+      </table>
+    </div>
+
+    <p>שני החלקים שכמעט תמיד שווה לכלול הם <strong>הקשר</strong> ו<strong>משימה</strong> — בלעדיהם Claude מנחש. <strong>תפקיד</strong> ו<strong>פורמט</strong> הם השדרוג: הם מכוונים את הרמה ואת צורת התשובה.</p>
+
+    <h3>הקצאת תפקיד (Persona) — החלק שהכי שוכחים</h3>
+    <p>מתוך ארבעת החלקים, "תפקיד" הוא זה שהכי שוכחים — וחבל, כי הוא משנה מאוד את הרמה ואת הטון של התשובה. (הקשר, נתונים ואילוצים עדיין חשובים יותר לנכונות מקצועית — התפקיד מכוון איך זה יישמע.) כשאתם אומרים ל-Claude מאיזו עמדה לכתוב, אתם מכווְנים גם את הרמה וגם את הטון: "אתה מומחה" ← תשובה בלי הסברים בסיסיים מיותרים; "אתה מסביר לטירון" ← תשובה סבלנית ומפורקת.</p>
+
+    <div class="callout tip">
+      <div class="callout-title">💡 אותו נושא, שני תפקידים</div>
+      <p>טריק שימושי: כדי לשלוט בעומק ובקהל, שנו רק את התפקיד. <em>"הסבר את עקרון ה-PWM כאילו אתה מרצה לסטודנט שנה א'"</em> ייתן תשובה אחת; <em>"הסבר את ה-PWM כמהנדס בכיר לעמית"</em> ייתן תשובה אחרת לגמרי — קצרה וצפופה יותר.</p>
+    </div>
+
+    <div class="callout warning">
+      <div class="callout-title">⚠️ תפקיד מעצב, לא ממציא ידע</div>
+      <p>הקצאת תפקיד מעצבת את <strong>הסגנון והפוקוס</strong> של התשובה — היא לא מעניקה ל-Claude ידע שאין לו. "אתה מומחה לתקן X" לא הופך אותו למומחה אם המידע על התקן לא נמצא אצלו; במקרה כזה תצטרכו לספק לו את המקור עצמו.</p>
+    </div>
+
+    <div class="callout prompt">
+      <div class="callout-title">💬 שלד מלא — איך זה נראה בפועל</div>
+      <p><em>"אתה מהנדס בדיקות (QA) מנוסה. אני מהנדס פיתוח, מכין סקירת עמיתים לתכנון של כרטיס בקרה. עבור על רשימת הבדיקות שאני מצרף, ואתר שלוש בדיקות חסרות שהיית מצפה לראות. החזר טבלה: שם הבדיקה, מה היא מכסה, רמת סיכון."</em></p>
+    </div>
+
+    <hr>
+
+    <!-- ====== CHAPTER 2 ====== -->
+    <h1 id="ch2">פרק 2: טכניקות פרומפטינג — כשפרומפט בסיסי לא מספיק</h1>
+    <p>השלד מפרק 1 (תפקיד · הקשר · משימה · פורמט) פותר את רוב המשימות היומיומיות. אבל לפעמים פרומפט אחד טוב לא מספיק — והנה ארגז הכלים לרגעים האלה. כל טכניקה כאן היא כלי שמוציאים מהארגז כשצריך, לא כלל שחובה ליישם בכל פעם. <strong>אם תיקחו שתיים להתחיל איתן — קחו את למידה מדוגמאות (2.1) ובקשת הבהרות (2.2);</strong> הן הכי משתלמות ביומיום, והשאר מצטרפות לפי הצורך.</p>
+
+    <div class="callout info">
+      <div class="callout-title">🎯 מטרות הפרק</div>
+      <ul>
+        <li>לזהות מתי השלד מפרק 1 לא מספיק — ולשלוף את הכלי הנכון מהארגז</li>
+        <li>שתי טכניקות פותחות: <strong>למידה מדוגמאות</strong> (2.1) ו<strong>בקשת הבהרות</strong> (2.2)</li>
+        <li>לערום כמה טכניקות על משימה אחת אמיתית (2.10)</li>
+      </ul>
+    </div>
+
+    <h2 id="ch2-1">2.1 למידה מדוגמאות (Few-shot)</h2>
+    <p>"Few-shot" — בעברית, "כמה דוגמאות" — זה פשוט לתת ל-Claude דוגמה אחת או שתיים של הפלט שאתם רוצים, במקום לתאר אותו במילים. לפעמים קל בהרבה <em>להראות</em> איך משהו צריך להיראות מאשר להסביר אותו. הכי שימושי כשרוצים סגנון או מבנה שחוזר על עצמו (דוחות, סיכומים, מיילים בתבנית קבועה); דוגמה אחת או שתיים מספיקות. רק דבר אחד לזכור: Claude מחקה את הדוגמה <em>בדיוק רב</em> — כולל הרגלים שלא התכוונתם אליהם — אז ודאו שהדוגמה נקייה ממה שאתם לא רוצים לראות בפלט.</p>
+    <div class="callout tip">
+      <div class="callout-title">💡 אנלוגיה: דוגמה במקום הסבר</div>
+      <p>במקום להסביר לעמית חדש בעל-פה איך לפרמט דו"ח בדיקה ("שים כותרת, אחר כך טבלה, אחר כך מסקנה...") — אתם פשוט מראים לו דו"ח קודם ואומרים "ככה". Few-shot זה בדיוק זה, מול Claude.</p>
+    </div>
+    <div class="callout prompt">
+      <div class="callout-title">💬 דוגמת פרומפט</div>
+      <p><em>"הנה איך נראה אצלנו סיכום ניסוי תקני:<br>
+      <strong>ניסוי 12 — בדיקת עומס תרמי.</strong> מטרה: לוודא יציבות עד 85°C. תוצאה: יציב עד 80°C, חריגה ב-83°C. מסקנה: נדרש גוף קירור.<br>
+      עכשיו כתוב סיכום באותו מבנה בדיוק עבור הנתונים הבאים: [הדבק נתונים]."</em></p>
+    </div>
+
+    <h2 id="ch2-2">2.2 בקשת הבהרות לפני תשובה (Ask-Before-Answer)</h2>
+    <p>טכניקה פשוטה ועוצמתית למי שלא בטוח שמסר את כל המידע: במקום לקוות שנתתם מספיק הקשר, בקשו מ-Claude <strong>לשאול אתכם</strong> מה חסר לו לפני שהוא עונה — וקבלו תשובה מותאמת במקום ניחוש.</p>
+    <div class="callout tip">
+      <div class="callout-title">💡 אנלוגיה: העמית ששואל קודם</div>
+      <p>עמית טוב לא רץ לעבוד על סמך בקשה חצי-ברורה. הוא עוצר ושואל: "רגע — למי הדו"ח? כמה זמן יש? מה הכי חשוב?". בקשת הבהרות גורמת ל-Claude לעשות בדיוק את זה, במקום לנחש.</p>
+    </div>
+    <div class="callout prompt">
+      <div class="callout-title">💬 דוגמת פרומפט</div>
+      <p><em>"אני צריך לכתוב נימוק לבחירת רכיב חלופי, להגשה לצוות. לפני שתנסח — שאל אותי כל מה שצריך לדעת כדי שהנימוק יהיה משכנע."</em></p>
+    </div>
+
+    <h2 id="ch2-sep">2.3 להפריד בין ההוראה לחומר המודבק</h2>
+    <p>הרגל קטן עם אפקט גדול — במיוחד למי שמדביק הרבה: datasheet, מייל מספק, דו"ח בדיקה. כשההוראה והחומר מתערבבים בגוש אחד, Claude עלול להתבלבל מה ההנחיה שלכם ומה סתם טקסט לעיבוד. הפתרון: <strong>סימון ברור</strong> — כותרת קצרה לפני כל חלק, או קו מפריד. והרגל משלים: כשהחומר ארוך, שימו אותו <em>קודם</em> ואת הבקשה <em>בסוף</em> — כך ההוראה נשארת הדבר הטרי ביותר על הלוח.</p>
+    <div class="callout prompt">
+      <div class="callout-title">💬 כך זה נראה</div>
+      <p><em>"החומר — מייל מהספק:<br>
+      ---<br>
+      [הדבקת המייל]<br>
+      ---<br>
+      הבקשה שלי: חלץ מהמייל את מועדי האספקה החדשים ואת הסעיפים שדורשים תשובה מאיתנו. רשימה קצרה."</em></p>
+    </div>
+    <div class="callout tip">
+      <div class="callout-title">💡 בונוס הגנה</div>
+      <p>ההפרדה הזו עוזרת גם מול הזרקת פרומפט (מטבלת הצרות בהקדמה): כשאמרתם במפורש "זה חומר, זו הבקשה", ל"הוראות" שמסתתרות בתוך טקסט מודבק קשה יותר להתחזות להנחיה שלכם. זו לא הגנה מלאה — אבל זה קו הגנה ראשון בחינם.</p>
+    </div>
+
+    <h2 id="ch2-idk">2.4 לתת רשות לומר "לא יודע"</h2>
+    <p>כשחסר ל-Claude מידע, הנטייה הטבעית שלו היא להשלים את הפער בניחוש שנשמע בטוח (הזיות — ראינו בהקדמה). משפט אחד בפרומפט מקטין את זה משמעותית: תנו לו במפורש <strong>רשות — ואפילו הוראה — לומר שהוא לא יודע</strong>. במחיר של שורה אחת, "תשובה יפה ואולי שגויה" הופכת ל"תשובה שאפשר לסמוך עליה". חיונית במיוחד כשעובדים מול מסמך, מפרט או נתונים — כל מקום שבו עובדה מומצאת עולה ביוקר.</p>
+    <div class="callout prompt">
+      <div class="callout-title">💬 דוגמת פרומפט</div>
+      <p><em>"ענה רק על סמך ה-datasheet שצירפתי. אם נתון לא מופיע בו — כתוב 'לא מופיע במסמך' במקום להשלים מהידע הכללי שלך."</em></p>
+    </div>
+
+    <h2 id="ch2-3">2.5 הנחיה שלילית</h2>
+    <p>לפעמים הדרך הכי מהירה לתשובה ממוקדת היא לומר ל-Claude לא רק מה כן לעשות, אלא גם <strong>מה לא</strong>. הנחיה שלילית חוסמת רעש — היא מוציאה מהתשובה בדיוק את מה שלא רוצים. והיא עובדת הכי טוב כשלצידה יש גם את החיוב: אמרו מה <strong>כן</strong> ("רק המפרט החשמלי") ולא רק מה לא.</p>
+    <div class="callout prompt">
+      <div class="callout-title">💬 דוגמת פרומפט</div>
+      <p><em>"סכם את ה-datasheet הזה — רק המפרט החשמלי, בלי טענות שיווקיות ובלי הקדמות. טבלה קצרה."</em></p>
+    </div>
+
+    <h2 id="ch2-4">2.6 ביקורת עצמית</h2>
+    <p>אחרי ש-Claude מייצר תשובה, אפשר לבקש ממנו <strong>לבקר את עצמו</strong> — לעבור על מה שכתב ולשפר. זה ממשיך את עקרון האיטרציה מפרק 1, רק שהפעם Claude הוא המבקר.</p>
+    <div class="callout prompt">
+      <div class="callout-title">💬 דוגמת פרומפט</div>
+      <p><em>"עבור על הסיכום שכתבת — מה חסר בו, ואיפה מבקר קפדן היה תוקף אותו? תקן בהתאם."</em></p>
+    </div>
+
+    <h2 id="ch2-5">2.7 פיצול משימה לשלבים (Chaining)</h2>
+    <p>כשמשימה גדולה ומורכבת, במקום לבקש הכל בבת אחת — <strong>פרקו אותה לשלבים מתוכננים</strong>, כשכל שלב מזין את הבא. שימו לב: זה שונה מ"איטרציה" של פרק 1 — שם <em>מתקנים</em> תשובה שכבר קיימת, כאן <em>מתכננים</em> מראש פירוק של העבודה.</p>
+    <div class="callout prompt">
+      <div class="callout-title">💬 דוגמת פרומפט</div>
+      <p><em>"יש לי חמישה datasheets להשוות. עבוד בשלבים: (1) חלץ מכל אחד את המתח, הזרם וטמפרטורת העבודה; (2) סדר את הכל בטבלה משווה; (3) המלץ על המתאים ביותר לתנאי ‒20°C עד 60°C, ונמק."</em></p>
+    </div>
+    <div class="callout tip">
+      <div class="callout-title">💡 שרשרת מחשבה (Chain-of-Thought) — ולמה לרוב לא תצטרכו אותה</div>
+      <p>זו הטכניקה הקלאסית של "בקש מהמודל לחשוב צעד אחר צעד". ב-Claude היא לרוב מיותרת: כשמצב החשיבה (Extended Thinking — ראו "יסודות בקצרה" בפתיחה) פעיל, את עומק החשיבה הוא מנהל פנימית ואין צורך לכתוב "ענה שלב אחר שלב". כשהמצב כבוי — בקשה לעבוד בשלבים עדיין עוזרת במשימות מורכבות. מתי כן שווה? כשאתם רוצים <em>לראות</em> את ההיגיון כדי לאמת או ללמוד — אז בקשו "פרט איך הגעת לתשובה".</p>
+    </div>
+
+    <h2 id="ch2-6">2.8 לבקש מ-Claude לנסח את הפרומפט</h2>
+    <p>תקועים על איך לנסח בקשה טובה? בקשו מ-Claude <strong>לכתוב את הפרומפט בשבילכם</strong>. זה מוריד את חסם הכניסה — במיוחד למי שלא מרגיש "חזק" בניסוח — ולרוב מחזיר בקשה מסודרת יותר ממה שהייתם כותבים לבד. וזה עובד גם בכיוון ההפוך: כבר כתבתם פרומפט? הדביקו אותו ושאלו איך לשפר.</p>
+    <div class="callout prompt">
+      <div class="callout-title">💬 דוגמת פרומפט</div>
+      <p><em>"תכתוב לי פרומפט טוב שאשתמש בו כדי לנתח כשלים בדוח בדיקה — כזה שיבקש את כל הפרטים החשובים ויחזיר ניתוח מסודר."</em></p>
+      <p><em>"הנה פרומפט שאני משתמש בו הרבה. מה חסר בו, ואיך היית משפר אותו? [הדבקת הפרומפט]"</em></p>
+    </div>
+
+    <h2 id="ch2-7">2.9 שילוב כמה מודלים</h2>
+    <p>לא חייבים שמודל אחד יעשה את הכל. לפעמים כלי אחד מייצר טיוטה ראשונה, וכלי אחר (למשל Claude) משפר או בודק אותה — הרעיון הוא להשתמש בכל מודל לחוזק שלו. זו הטכניקה הכי "מתקדמת" כאן, ולרובכם היא הכי פחות יומיומית.</p>
+    <div class="callout prompt">
+      <div class="callout-title">💬 דוגמת פרומפט</div>
+      <p><em>"הנה טקסט שכתב כלי אחר. שפר את הניסוח, ובדוק אם יש כאן משהו לא מדויק."</em></p>
+    </div>
+
+    <h2 id="ch2-8">2.10 מרכיבים את הכל — תרחיש אחד</h2>
+    <p>הטכניקות לא נועדו לעבוד לבד. ברוב המשימות האמיתיות תערימו שתיים-שלוש על אותה בקשה. הנה איך זה נראה על משימה אחת: כתיבת נימוק לבחירת רכיב חלופי, להגשה לצוות.</p>
+    <div class="callout prompt">
+      <div class="callout-title">💬 תרחיש: נימוק לבחירת רכיב — בשלוש שכבות</div>
+      <p><strong>1. תפקיד + בקשת הבהרות:</strong> <em>"אתה מהנדס רכיבים מנוסה. אני צריך נימוק לבחירת רגולטור מתח חלופי, להגשה לצוות. לפני שתכתוב — שאל אותי כל מה שצריך לדעת."</em><br>
+      <span style="color:var(--text-muted)">(Claude שואל על הדרישות — אתם עונים)</span></p>
+      <p><strong>2. פורמט:</strong> <em>"עכשיו כתוב את הנימוק כטבלה: קריטריון, הרכיב המקורי, החלופה, והאם עומד בדרישה."</em></p>
+      <p><strong>3. ביקורת עצמית:</strong> <em>"עבור על מה שכתבת — איזו טענה מבקר היה מאתגר, ואיפה חסר נתון תומך? חזק בהתאם."</em></p>
+    </div>
+
+    <h2 id="ch2-9">2.11 טכניקות במבט אחד</h2>
+    <p>טבלה לסריקה מהירה ולהפניה חוזרת — כולל הקצאת התפקיד מפרק 1.3, כדי שתהיה לכם תמונה אחת שלמה:</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>טכניקה</th><th>מתי להשתמש</th><th>ניסוח טיפוסי</th></tr>
+        <tr><td><strong>הקצאת תפקיד</strong> (1.3)</td><td>לכוון רמה, טון וקהל</td><td>"אתה מהנדס בדיקות (QA) מנוסה..."</td></tr>
+        <tr><td><strong>למידה מדוגמאות</strong> (Few-shot)</td><td>לחקות סגנון או מבנה קבוע</td><td>"הנה דוגמה — עכשיו כתוב באותו מבנה"</td></tr>
+        <tr><td><strong>בקשת הבהרות</strong></td><td>כשלא בטוח שמסרת את כל המידע</td><td>"שאל אותי כל מה שצריך לפני שתענה"</td></tr>
+        <tr><td><strong>הפרדת הוראה מחומר</strong></td><td>כשמדביקים חומר ארוך</td><td>"החומר: --- ... --- הבקשה שלי: ..."</td></tr>
+        <tr><td><strong>רשות לומר "לא יודע"</strong></td><td>כשעובדים מול מסמך או נתונים</td><td>"אם לא מופיע — כתוב שלא מופיע"</td></tr>
+        <tr><td><strong>הנחיה שלילית</strong></td><td>לשמור פוקוס, למנוע רעש</td><td>"...בלי X ובלי Y"</td></tr>
+        <tr><td><strong>ביקורת עצמית</strong></td><td>ללטש פלט קיים</td><td>"עבור על מה שכתבת — מה חסר ואיך לשפר?"</td></tr>
+        <tr><td><strong>פיצול לשלבים</strong></td><td>משימה גדולה ומורכבת</td><td>"שלב 1... שלב 2... שלב 3..."</td></tr>
+        <tr><td><strong>לבקש ניסוח פרומפט</strong></td><td>כשתקועים על איך לנסח</td><td>"תכתוב לי פרומפט טוב ל..."</td></tr>
+        <tr><td><strong>שילוב כמה מודלים</strong></td><td>להשתמש בכל מודל לחוזק שלו</td><td>"הנה פלט מכלי אחר — שפר ובדוק"</td></tr>
+      </table>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-title">💡 פרק 2 — במשפט אחד</div>
+      <p>השלד מפרק 1 הוא לחם-החוק היומיומי; הטכניקות כאן הן הכלים שמוציאים מהארגז כשצריך עוד דיוק, עוד שליטה או עוד עומק. לא צריך את כולן בכל פעם — צריך לדעת שהן שם.</p>
+    </div>
+
+    <hr>
+
+    <!-- ====== CHAPTER 3 ====== -->
+    <h1 id="ch3">פרק 3: Skills – לארוז משימה חוזרת</h1>
+    <p>Skill הוא קובץ הנחיות חכם — בפורמט Markdown (קובץ טקסט פשוט) — שמלמד את Claude לבצע משימה ספציפית או מורכבת. <em>(ליתר דיוק: תיקייה קטנה שבתוכה קובץ ההוראות, ולפעמים עוד כלי עזר אחד לידו — נפתח אותה בהמשך הפרק. עד אז "קובץ" יעשה את העבודה.)</em> במקום לחזור על אותן הוראות בכל פעם, Skill אורז לוגיקה, תהליך עבודה, נוהל או אפילו קוד למקום אחד — כך ש-Claude מפעיל את אותה שיטה אוטומטית כשהבקשה מתאימה, ומחזיר תוצאה עקבית יותר. הרעיון של Skills זהה ב-Claude Desktop, ב-Cowork וב-Claude Code — הזמינות המדויקת ואופן ההפעלה משתנים מעט בין הסביבות.</p>
+    <p>למה זה משנה? כי כולנו מכירים את התסכול: פותחים שיחה חדשה, מסבירים ל-Claude מי אתם, מה ההקשר, איך אתם רוצים את הפלט, נותנים דוגמאות, מתקנים — ושעתיים אחר כך, בשיחה הבאה, מתחילים מאפס. Skill פותר בדיוק את זה: כותבים את ההוראות <strong>פעם אחת</strong>.</p>
+    <p>הדימוי המקובל ל-Skills הוא "מתכונים" — וזה תיאור מדויק, אבל חלקי. כאן נפתח את הקופסה — מה באמת יושב בפנים, למה זה כלי חזק במיוחד לצוות R&amp;D, ואיך הופכים משימה חוזרת ומעצבנת ל"כפתור" אחד אמין. בסוף הפרק נראה דמו של Skill אמיתי מהעולם שלכם.</p>
+
+    <div class="callout info">
+      <div class="callout-title">🎯 מטרות הפרק</div>
+      <ul>
+        <li>להבין מה זה <strong>Skill</strong> — ולמה זה שונה מפרומפט רגיל</li>
+        <li>שני דפוסים: <strong>תבנית תוכן</strong> ו<strong>מדיניות וכללים</strong> — כולל ה-Skill של פטר מהפתיחה, ומאיפה בדיוק מגיעה ההבטחה ל"אותה תוצאה בכל פעם"</li>
+        <li><strong>לבנות Skill ראשון בעצמכם</strong> — שלושת המסלולים ב-3.4</li>
+        <li>לעבוד עם Skills <strong>בבטחה</strong> — נקודות בקרה והתקנה ממקור מהימן</li>
+      </ul>
+    </div>
+
+    <h2 id="ch3-1">3.1 מה זה Skill — ולמה זה שונה מפרומפט רגיל</h2>
+    <p>פרומפט הוא הוראה <strong>חד-פעמית</strong>: אתם מסבירים משימה, מקבלים תוצאה, וזהו. בפעם הבאה שתצטרכו את אותו דבר — תסבירו הכול מחדש. <strong>Skill</strong> הוא הכיוון ההפוך: אתם מתארים <strong>פעם אחת</strong> איך מבצעים משימה מסוימת, ומאותו רגע Claude יודע להפעיל את אותה שיטה אוטומטית בכל פעם שהבקשה מתאימה — בלי שתסבירו מחדש את כל ההקשר. לרוב תקבלו תוצאה עקבית יותר, ולא תצטרכו להיזכר "מה בדיוק ביקשתי בפעם הקודמת".</p>
+
+    <div class="callout tip">
+      <div class="callout-title">💡 אנלוגיה: נוהל עבודה לעובד חדש</div>
+      <p>תחשבו על ההבדל בין להסביר לעמית חדש משימה <em>בעל פה כל בוקר מחדש</em>, לבין לכתוב פעם אחת <strong>נוהל עבודה</strong> מסודר ולתלות אותו על הקיר. הפרומפט הוא ההסבר בעל פה; ה-Skill הוא הנוהל. ברגע שהנוהל קיים — כולם (וגם Claude) מבצעים את אותה משימה באותה צורה, בלי תלות במי שמריץ או במצב הרוח של אותו יום.</p>
+    </div>
+
+    <h3>מה יש בתוך Skill?</h3>
+    <p>Skill הוא בעצם חבילה קטנה עם שלושה חלקים — שניים תמיד, ואחד לפי הצורך:</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>חלק</th><th>מה זה</th><th>דוגמה</th></tr>
+        <tr><td><strong>תיאור (ה"טריגר")</strong></td><td>משפט קצר שאומר ל-Claude <em>מתי</em> להפעיל את ה-Skill. זה מה שמאפשר לו להחליט לבד.</td><td>"כשמעלים קובץ netlist (ייצוא של לוח) ושואלים על פאדי בדיקה או קוטר פרוב — הפעל אותי."</td></tr>
+        <tr><td><strong>הוראות</strong></td><td>השיטה עצמה: השלבים, הכללים, הפורמט, מה כן ומה לא — בשפה רגילה.</td><td>"קח רק via-ים לבדיקה, הפרד TOP/BOTTOM, בחר פרוב לפי מרווח..."</td></tr>
+        <tr><td><strong>כלי עזר</strong> <span style="color:var(--text-muted)">(לפי צורך)</span></td><td>סקריפט קטן (תוכנית שמריצה את אותם חישובים בדיוק) או מסמך עזר — למשימות שדורשות דיוק חוזר.</td><td>סקריפט שמחשב מרווחים ובוחר קוטר פרוב</td></tr>
+      </table>
+    </div>
+    <p>שימו לב ל<strong>תיאור</strong> — זה החלק שעושה את הקסם. אתם לא "קוראים" ל-Skill ידנית; Claude מזהה לבד שהבקשה שלכם מתאימה לתיאור, ושולף את ה-Skill בשבילכם. אתם פשוט מבקשים מה שאתם צריכים, בשפה רגילה.</p>
+
+    <h3>מה קורה מאחורי הקלעים (בקצרה)</h3>
+    <p>אפשר לחשוב על זה כך: Claude מחזיק מעין <strong>אינדקס קצר</strong> של ה-Skills שלכם — בעיקר ה<strong>תיאור</strong> של כל אחד — ושולף את ההוראות המלאות רק כשמשימה מתאימה לאחד מהם. זה קורה בשלוש רמות: התיאור נמצא שם תמיד (זול מאוד — כמה שורות ל-Skill, גם אם ה-Skill עצמו ענק); ההוראות המלאות נטענות רק כשהוא נבחר; וכלי עזר, אם יש, נכנסים רק כשמשתמשים בהם בפועל.</p>
+    <p>מבחינתכם כמשתמשים: רק ה-Skills הרלוונטיים באמת משפיעים על השיחה. שתי מסקנות מעשיות: (1) <strong>התיאור הוא השורה הכי חשובה שתכתבו</strong> — מעורפל מדי, וה-Skill פשוט לא ייתפס; (2) אם אינכם רוצים לסמוך על הזיהוי האוטומטי, אפשר לבקש במפורש בשמו — "השתמש ב-Skill email-reply כדי לענות" (וב-Claude Code אפשר גם עם לוכסן: <span dir="ltr">/email-reply</span>).</p>
+
+    <div class="callout tip">
+      <div class="callout-title">💡 למה לא פשוט לשים את זה בהוראות הפרויקט?</div>
+      <p>שאלה הוגנת — אפשר לכתוב את הנוהל פעם אחת בהוראות הקבועות של הפרויקט, והוא יהיה שם. הבעיה היא שהוא יהיה שם <em>תמיד</em>: גם כשאתם עובדים על משהו אחר לגמרי. חמישה נהלים כאלה, וכל שיחה נפתחת עם לוח עמוס — בדיוק התופעה מההקדמה. Skill פותר את זה: הוא יושב בצד ונכנס פנימה רק כשהוא באמת נדרש. <strong>נוהל שרלוונטי לכל שיחה — בהוראות הפרויקט. נוהל שרלוונטי לפעמים — Skill.</strong></p>
+    </div>
+
+    <p>ודיוק אחד חשוב: ה-Skill "יושב בצד" רק במובן האחסון. ברגע שהוא נשלף, ההוראות שלו נטענות אל תוך הלוח של אותה שיחה — הוא לא עוזר נפרד שעובד במקביל. (בפרק 4 נפגוש את תת-הסוכן, שדווקא כן עובד על לוח נפרד משלו — ושם ההבחנה תתחדד.)</p>
+
+    <h3>ואיך Skill נראה מבפנים? קובץ אחד בשם SKILL.md — ולפעמים עוד משהו לידו</h3>
+    <p>Skill הוא למעשה <strong>תיקייה קטנה</strong>. בלב שלה יש תמיד קובץ טקסט אחד בשם <strong>SKILL.md</strong> — וזה כל מה שצריך לרוב ה-Skills. לצידו אפשר לשים, לפי הצורך, כלי עזר: סקריפט קטן או מסמך התייחסות. תחשבו על זה כמו קלסר נוהל: דף ההוראות תמיד שם, ולפעמים מחוברת אליו גם מחשבונית ייעודית. נתחיל מדף ההוראות. הסיומת .md מציינת <strong>Markdown</strong> — דרך פשוטה לכתוב מסמך מעוצב: במקום ללחוץ על כפתורי עיצוב כמו ב-Word, כותבים סימן קטן (סולמית # לכותרת, מקף - לפריט ברשימה). אתם לא חייבים להכיר Markdown כדי להתחיל — הכלים שנראה בונים את הקובץ בשבילכם. ככה נראה SKILL.md מינימלי. הוא ייראה טכני לרגע — אבל אלו בסך הכול שלושה שדות טקסט:</p>
+    <pre class="skillfile">---
+name: email-reply
+description: Writes email replies in my style. Use when I ask to draft a
+  reply to an email or to a customer inquiry.
+---
+
+# Email Replies - My Style
+
+## Rules
+- Address the reader directly, no emojis
+- Short and to the point, no filler
+- Write the reply in Hebrew
+
+## Examples
+Opening: "Hi, hope all is well"
+Closing: "Thanks, [Name]"</pre>
+    <p>כדי להתחיל צריך רק שלושה דברים: <strong>name</strong> — שם ה-Skill (וגם השם שאפשר לקרוא לו דרכו עם לוכסן); <strong>description</strong> — התיאור שמסביר מתי להפעיל אותו (לרוב זה החלק הכי חשוב); וכל מה שמופיע אחרי קו ההפרדה השני — אלו ההוראות עצמן. שאר השדות שתראו בתיעוד הרשמי הם מתקדמים — ובהתחלה אפשר להתעלם מהם.</p>
+    <p><strong>ולמה הדוגמה באנגלית?</strong> אפשר לכתוב Skill גם בעברית והוא יעבוד. בפועל רוב ה-Skills שתפגשו כתובים באנגלית, וזו גם ברירת המחדל כש-Claude כותב אותם בשבילכם — לכן הדוגמאות כאן באנגלית. שימו לב שאפשר להפריד בין שפת ההוראות לשפת הפלט: שורה אחת בסוף ("Write the output in Hebrew") מספיקה כדי לקבל את התוצאה בעברית.</p>
+
+    <h3>שתי דרכים נפוצות לחשוב על Skills</h3>
+    <p>אין חלוקה רשמית לסוגי Skills — בפועל אפשר לבנות אותם בהרבה צורות. אבל כדי להבין מה נותן ערך בפועל, נוח לחשוב על שני דפוסים נפוצים:</p>
+    <ul>
+      <li><strong>תבנית תוכן (Template) — ה-AI כעורך/מנהל</strong>: ה-Skill מגדיר מבנה, סגנון וכללי כתיבה (למשל "ככה אני בונה דו"ח בדיקה", "ככה אני מסכם פגישה"). התוצאה יוצאת באותו קו מחשבה ובאותו פורמט בכל פעם, גם אם הניסוח משתנה מעט. זה הסוג שהכי קל להתחיל ממנו — לרוב מספיקות הנחיות טקסטואליות ודוגמאות.</li>
+      <li><strong>מדיניות וכללים (Policy / Rules) — ה-AI כטכנאי/מתקין</strong>: תהליך עבודה מוגדר ומבוסס צ'ק-ליסט, שלעיתים קרובות מגובה בסקריפט או כלי חישוב. המטרה כאן היא לא הניסוח, אלא ביצוע מדויק ועקבי של פרוטוקול טכני קשיח. ככל שיש יותר כללים קשיחים וכלים דטרמיניסטיים (כמו סקריפט אוטומציה), התוצאה צפויה ומדויקת יותר — ואם חלק מהתהליך נשען על כלי דטרמיניסטי, אפשר אפילו להגיע לתוצאה זהה בכל הרצה. בנייה כזו דורשת יותר עבודה, אך נותנת ערך עצום במשימות קריטיות.</li>
+    </ul>
+    <p>דוגמאות לכל דפוס (העמודות הן שתי רשימות נפרדות — אין התאמה בין השורות):</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>תבנית תוכן</th><th>מדיניות וכללים</th></tr>
+        <tr><td>סיכום פגישה</td><td>חילוץ פאדי ICT</td></tr>
+        <tr><td>כתיבת מיילים</td><td>עיבוד netlist</td></tr>
+        <tr><td>יצירת דו"ח בדיקה</td><td>הפקת טבלת פרמטרים</td></tr>
+        <tr><td>ניסוח תשובות ללקוחות</td><td>בדיקות עם כללי החלטה</td></tr>
+      </table>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-title">💡 הכוח האמיתי: ידע צוותי, ארוז</div>
+      <p>ברגע שהשיטה של המומחה יושבת בתוך Skill — כל הצוות מקבל פלט ברמת מומחה, גם מי שאינו המומחה. הכלל לא "מתאדה" כשהאדם בחופשה, ולא משתנה מאדם לאדם. וכששיפרתם את השיטה — מעדכנים במקום אחד, וכולם נהנים מזה מיד.</p>
+    </div>
+
+    <div class="callout info">
+      <div class="callout-title">🚫 מה Skill <em>לא</em> עושה</div>
+      <p>כדי למנוע בלבול, כדאי לדעת גם את הגבולות. Skill:</p>
+      <ul>
+        <li>לא מלמד את המודל ידע חדש ולא "מאמן" את Claude — רק נותן לו הקשר והוראות.</li>
+        <li>לא מבטיח נכונות — הוא מגדיל עקביות, לא אמת מוחלטת.</li>
+        <li>לא שומר זיכרון בין שיחות.</li>
+        <li>לא מחליף בדיקה אנושית.</li>
+      </ul>
+      <p style="margin-top:10px;">ואל תתבלבלו עם <strong>Project</strong>: Project הוא <em>תיקיית עבודה</em> — קבוצת שיחות סביב נושא, עם הקשר קבוע; <strong>Skill</strong> הוא <em>נוהל שהולך אִתכם לכל שיחה</em>, גם בתוך פרויקט וגם מחוץ לו. הם משלימים, לא מתחרים.</p>
+    </div>
+
+    <h2 id="ch3-2">3.2 דמו: רואים Skill בפעולה</h2>
+    <p>נראה שני Skills אמיתיים — אחד מכל דפוס. נתחיל מ<strong>תבנית תוכן</strong>, שכל אחד יכול לבנות בכמה דקות, ואז נצלול ל<strong>Skill מגובה-סקריפט</strong> מהעולם שלכם.</p>
+
+    <h3>הדפוס הראשון: תבנית תוכן — Skill לסיכום פגישה</h3>
+    <p>כמעט כל פגישה מסתיימת בכמה משימות-המשך (action items). בלי שיטה קבועה, הן נבלעות בתוך הסיכום, כל אחד כותב אותן אחרת, ומשהו תמיד נופל בין הכיסאות. Skill מסוג "תבנית תוכן" פותר את זה: מגדירים פעם אחת איך צריכה להיראות רשימת המשימות — וזהו.</p>
+
+    <div class="callout prompt">
+      <div class="callout-title">💬 ההוראות שבתוך ה-Skill</div>
+      <p><em>"קבל תמליל או נקודות מפגישה, וזהה רק את משימות-ההמשך. אל תסכם את מהלך הפגישה. החזר טבלה בת שלוש עמודות: משימה, אחראי, תאריך יעד. אם אחראי או תאריך לא צוינו — כתוב 'לא הוגדר'."</em></p>
+    </div>
+
+    <p style="margin-bottom:6px; color:var(--text-muted); font-size:13px;">וככה הוא נראה כקובץ SKILL.md — בדיוק מה שהיית שומר בהגדרות:</p>
+    <pre class="skillfile">---
+name: action-items
+description: Extracts follow-up tasks from a meeting transcript. Use when a
+  transcript is uploaded, or when asked for "action items" / "what tasks
+  came out of the meeting".
+---
+
+# Extract Action Items from a Meeting
+
+## Instructions
+- Identify follow-up tasks only - do not summarize the discussion
+- Return a three-column table: Task | Owner | Due date
+- If no owner is stated, write "Not specified"
+- If no due date is stated, write "Not specified"
+- Write the output table in Hebrew</pre>
+
+    <p>זהו — בלי שורת קוד אחת. מעכשיו, כשאתם נותנים ל-Claude תמליל ומבקשים action items, הוא מחיל את התבנית לבד ומחזיר את אותה טבלה בכל פעם. Skill כזה לוקח כמה דקות לבנות, וזה הסוג שהכי קל להתחיל ממנו — לרוב מספיקות הוראות ודוגמאות, בדיוק כמו כאן.</p>
+
+    <h3>הדפוס השני: Skill מגובה-סקריפט — הדוגמה מהצוות שלכם</h3>
+
+    <p>הדמו הראשון (סיכום הפגישה) הוא Skill שמנחה <em>כתיבה</em>: Claude קורא את התמליל ומשתמש בשיקול דעת שלו כדי לנסח את הטבלה. אפשר לצפות שהניסוח ישתנה מעט בין הרצות — וזה בסדר גמור, כי מה שחשוב זה המבנה, לא המילים המדויקות.</p>
+    <p>הדמו הבא שונה מהותית. זה Skill שמנחה <em>חישוב</em>, ויש לו תכונה שהדמו הראשון לא מציע: <strong>אותו קלט יניב אותו פלט</strong> — כל עוד הסקריפט, התלויות וסביבת הריצה זהים. זה מה שנקרא <strong>דטרמיניסטי</strong> (deterministic — מונח מעולם המחשבים שמשמעותו: צפוי, קבוע, ללא הפתעות). בדקו את אותו לוח פעמיים — תקבלו את אותו Excel, כל עוד הסקריפט רץ ולא שוּנה.</p>
+    <p>ומיד השאלה החשובה: <em>מאיפה</em> מגיעה התכונה הזו? לא מזה שהכללים כתובים בצורה מאוד ברורה. כללים בשפה חופשית — גם המדויקים ביותר — הם עדיין הנחיה ש-Claude קורא ומיישם, ושתי הרצות עשויות להיראות מעט שונה. הדטרמיניזם מגיע ממקום אחד בלבד: <strong>סקריפט</strong> — תוכנית קטנה שמבצעת את החישוב עצמו. וזה בדיוק מה שיושב בתיקייה של ה-Skill הבא, לצד ה-SKILL.md.</p>
+
+    <div class="callout tip">
+      <div class="callout-title">💡 מחשבון לעומת עורך — שתי ציפיות שונות</div>
+      <p>Skill כתיבה הוא כמו <strong>עורך טוב</strong>: קורא, מבין, מנסח מחדש — ויש בו שיקול דעת, וזה בסדר. Skill מגובה-סקריפט הוא כמו <strong>מחשבון</strong>: לא "מפרש", לא "מנחש" — מחשב לפי כלל קבוע. כשאתם מקלידים 2+2 אתם לא תוהים "מה הוא <em>יחליט</em> להחזיר?" — אתם יודעים שהתשובה תמיד 4.</p>
+      <p><strong>וזו ההבחנה שכדאי לקחת מהפרק כולו:</strong> מה שכתוב בהוראות — עקבי מאוד. מה שרץ בסקריפט — קבוע. שווה לדעת באיזה משניהם אתם משתמשים.</p>
+    </div>
+
+    <h3 style="margin-top:28px; font-size:15px; color:var(--text-muted);">הבעיה שפטר פתר</h3>
+
+    <p><strong>את התוצאה כבר ראיתם בפתיחה — עכשיו נפתח את הקופסה.</strong> מי שעבד על הכנת מתקן <strong>ICT</strong> (In-Circuit Test — בדיקה חשמלית של הלוח) יכיר את הכאב: כדי לבנות <strong>bed-of-nails</strong> (מתקן בדיקה במחטים) צריך לחלץ מה-<strong>netlist</strong> של הלוח (קובץ הייצוא שמתאר את החיבורים ונקודות הבדיקה) ארבעה דברים:</p>
+    <ul>
+      <li>אילו נקודות הן נקודות בדיקה ICT — ובאיזה צד של הלוח (TOP / BOTTOM)</li>
+      <li>גודל כל פאד (נקודת בדיקה)</li>
+      <li>מידות הלוח</li>
+      <li>ו<em>לכל פאד בנפרד</em>: איזה קוטר <strong>פרוב</strong> (מחט בדיקה) מתאים — בלי שיתנגש בשכן</li>
+    </ul>
+    <p>ידנית, זו עבודה של שעות. ועם שני מהנדסים שעושים אותה על אותו לוח — מגיעים לרשימות שונות. לא כי מישהו טועה, אלא כי אין כלל מוסכם שכולם מיישמים אחיד. פטר מהצוות ישב ותרגם את הידע שלו לכללים קשיחים. מה שיצא מזה הוא Skill עם שני חלקים: <strong>SKILL.md</strong> שמסביר מתי להפעיל ומה הכללים, ולצידו <strong>סקריפט</strong> שמבצע את החישוב עצמו. מאותו רגע הידע הזה שייך לצוות.</p>
+
+    <div class="callout prompt">
+      <div class="callout-title">💬 כך מפעילים את ה-Skill</div>
+      <p><em>"מצורף קובץ ה-netlist של הלוח. חלץ את פאדי הבדיקה של ICT, הפרד לפי צד (TOP/BOTTOM), ציין את גודל כל פאד ואת מידות הלוח, והמלץ על קוטר פרוב לכל פאד."</em></p>
+      <p style="margin-top:8px; color:var(--text-muted); font-size:13px;">Claude מזהה לבד שזו המשימה של ה-Skill, מפעיל אותו, ומחזיר קובץ Excel מוכן.</p>
+    </div>
+
+    <h3 style="margin-top:28px; font-size:15px; color:var(--text-muted);">איך הוא מגיע לאותה תשובה בכל פעם</h3>
+
+    <p>כל ההחלטות שה-Skill מקבל מוגדרות מראש כחוקים קבועים — לא כ"הנחיות שמישהו מפרש" — ורובן מבוצעות בסקריפט. זה מה שיוצר את הדטרמיניזם. הנה החוקים (בשפה פשוטה):</p>
+    <ol>
+      <li><strong>מזהה את הפורמט לבד</strong> — בודק את תוכן הקובץ ואת סיומתו ומחליט: Mentor/PADS, ODB++, EDIF, CAD. פורמט שעדיין לא נתמך במלואו — הוא עוצר ומבקש דוגמה. לא מנחש.</li>
+      <li><strong>מסנן רק נקודות ICT-via</strong> — שומר T_TEST VIA ומשמיט T_TEST PIN. הסיבה: לפי מוסכמות הצוות שלנו, ב-bed-of-nails בודקים via-ים (מעברים בין שכבות הלוח), לא פיני רכיבים.</li>
+      <li><strong>מחלק לשתי רשימות — TOP ו-BOTTOM</strong> — לפי צד הלוח של כל נקודה.</li>
+      <li><strong>קורא גודל פאד</strong> — מנתוני הפדסטאק (padstack — צורת נחושת סביב חור הלוח); אם חסר — ממיר את שם הנקודה לגודל לפי מוסכמת השמות בצוות (למשל 10_22 → 22 mil).</li>
+      <li><strong>בוחר קוטר פרוב — לפי המרווח לשכן, לא לפי גודל הפאד.</strong> ⟵ זה הכלל החכם של הצוות. ראו מיד.</li>
+      <li><strong>מחשב מידות לוח</strong> — מתוך קווי המתאר החיצוניים.</li>
+      <li><strong>מפיק Excel</strong> — כמה גיליונות: סיכום (מידות ומספר פאדים לכל צד), טבלת פרובים, ורשימה נפרדת ל-TOP ול-BOTTOM.</li>
+    </ol>
+
+    <p>שבעת החוקים האלה — לא Claude הוא שמחליט על-פיהם כל פעם מחדש. הם כתובים ב-SKILL.md ומבוצעים בסקריפט. <strong>וזו הנקודה:</strong> כשהחישוב רץ בסקריפט, הוא לא תלוי בניסוח הבקשה שלכם ולא במי שמריץ. אותו netlist — אותו Excel, כל עוד הסקריפט עצמו לא שוּנה. (ומה קורה כשה-Skill בכל זאת נכשל או מדלג — בהמשך, ב-3.5.)</p>
+
+    <p>והנה הדוגמה הכי ממחישה: <strong>בחירת קוטר פרוב</strong>. אם Claude היה מחליט בעצמו — בלי כלל קשיח — הוא עשוי היה לנחש "פאד קטן, פרוב קטן". אינטואיטיבי, אבל שגוי לפי המוסכמה שלנו. הכלל שפטר הכניס ל-Skill אומר משהו אחר לגמרי: מה שקובע הוא <strong>המרחק לשכן הקרוב ביותר</strong> (מרכז-למרכז, אותו צד). שתי מחטים קרובות מדי יתנגשו פיזית — ולכן הכלל בוחר את הפרוב הגדול ביותר שעדיין לא מתנגש (יחידות: mil = אלפית האינץ'). <em>שימו לב: זו מוסכמת צוות, לא כלל אוניברסלי של תעשיית ה-ICT — צוותים אחרים עשויים לבחור אחרת.</em></p>
+
+    <div class="table-wrap">
+      <table>
+        <tr><th>מרווח לשכן הקרוב (מרכז-למרכז)</th><th>קוטר פרוב מומלץ</th></tr>
+        <tr><td>100 mil ומעלה</td><td><strong>100 mil</strong></td></tr>
+        <tr><td>75 mil ומעלה</td><td><strong>75 mil</strong></td></tr>
+        <tr><td>50 mil ומעלה</td><td><strong>50 mil</strong></td></tr>
+        <tr><td>פחות מ-50 mil</td><td>⚑ מסומן לבדיקה ידנית</td></tr>
+      </table>
+    </div>
+
+    <p>ועכשיו הדוגמה שמוכיחה שזה חישוב ולא "פרשנות": שני פאדים, גודל זהה — 22 mil. פאד אחד עם שכן ב-110 mil (שהם 0.110 in) יקבל פרוב <strong>100 mil</strong>. פאד שני <em>באותו גודל בדיוק</em>, עם שכן ב-41 mil בלבד (0.041 in) — מסומן <strong>פחות מ-50 mil</strong> לבדיקה ידנית. אין כאן פרשנות, אין שיקול דעת, אין "אולי". הכלל מחליט.</p>
+
+    <div class="callout warning">
+      <div class="callout-title">⚠️ עוצר — לא מנחש</div>
+      <p>אם ה-Skill לא מצליח לזהות בוודאות את פורמט הקובץ, הוא <strong>עוצר ומבקש קובץ דוגמה קטן</strong>. לא ממציא מספרים, לא "מנסה בכל זאת". הסיבה ברורה: במתקן בדיקה, מספר שגוי גרוע בהרבה ממשפט "אני לא יודע".</p>
+      <p>ושימו לב <em>איך</em> זה מושג: העצירה כתובה בתוך הסקריפט, לא רק כבקשה מנומסת בהוראות. זה ההבדל בין "ביקשתי ממנו לא לנחש" לבין "הוא לא <em>יכול</em> לנחש". במשימות שבהן טעות עולה ביוקר — זה בדיוק המקום להשקיע.</p>
+    </div>
+
+    <div class="callout info">
+      <div class="callout-title">🔍 description לעומת ## When to use</div>
+      <p><strong>description</strong> הוא "תווית על קופסה" — Claude קורא אותו לפני שה-Skill נטען ומחליט אם להפעיל אותו. <strong>## When to use</strong> נקרא אחרי הטעינה ומאפשר לפרט מקרים ספציפיים. ב-Skill של פטר שניהם קיימים ועובדים; בSkills פשוטים (כמו action items) — description לבד מספיק.</p>
+    </div>
+
+    <h2 id="ch3-3">3.3 מתי לבנות Skill — ומתי לא</h2>
+    <p>לא כל משימה צריכה Skill. הנה מבחן פשוט — אם רוב התשובות "כן", שווה לבנות:</p>
+    <ul>
+      <li>האם אני עושה את זה <strong>שוב ושוב</strong> (לא פעם אחת)?</li>
+      <li>האם אני עושה את זה <strong>באותו אופן</strong> בכל פעם (יש שיטה / כללים)?</li>
+      <li>האם <strong>עקביות</strong> חשובה לי — שאקבל אותה תוצאה בכל פעם, לא משנה מי מריץ?</li>
+      <li>האם זה ידע ששווה <strong>לשמר</strong> — שיטה של מומחה, סטנדרט, פורמט קבוע?</li>
+    </ul>
+    <p>ואם המשימה כוללת <strong>חישוב או שלבים מדויקים שחוזרים</strong> — שם Skill מגובה-סקריפט נותן את הערך הגבוה ביותר, כמו בדמו של פטר.</p>
+
+    <div class="callout info">
+      <div class="callout-title">🕐 מתי כן ומתי לא</div>
+      <p><strong>כן:</strong> דו"ח בדיקה חוזר בפורמט שלכם · חילוץ פרמטרים מ-Datasheets (דפי הנתונים של הרכיבים) לטבלה סטנדרטית · חילוץ פאדי ICT (כמו בדמו) · סיכום פגישה במבנה קבוע · צ'קליסט בדיקה אחיד.</p>
+      <p><strong>לא:</strong> משימה חד-פעמית · משהו שמשתנה בכל פעם ואין לו שיטה יציבה · משהו שפרומפט אחד טוב כבר פותר מצוין.</p>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-title">💡 המלצה לפני שבונים Skill</div>
+      <p>השיטה שעובדת הכי טוב: קודם עשו את המשימה ידנית (עם Claude לצידכם), עד שהתהליך סגור והתוצאות מדויקות — ורק אז ארזו ל-Skill. Skill שנבנה לפני שהתהליך יציב נוטה להזדקק לתיקונים חוזרים. לא חובה — אבל כשהולכים ככה, ה-Skill הראשון יוצא חזק יותר מההתחלה.</p>
+      <p><strong>ה-Skill זו האריזה, המשימה זה התוכן.</strong></p>
+    </div>
+
+    <div class="callout warning">
+      <div class="callout-title">⚠️ Skill אחד = משימה אחת</div>
+      <p>אל תנסו לדחוס ל-Skill אחד גם תרגום, גם סיכום וגם בניית טבלה — Skill כזה כנראה ייכשל באחד מהם. עדיף כמה Skills קטנים וממוקדים, שכל אחד עושה דבר אחד מצוין. זה גם מקל לתחזק ולשפר אותם.</p>
+    </div>
+
+    <p>והחדשות הטובות: אתם לא צריכים לבנות את זה לבד — Claude כותב את ה-Skill בשבילכם. איך בדיוק, בסעיף הבא.</p>
+
+    <h2 id="ch3-4">3.4 כך בונים Skill בפעם הראשונה</h2>
+    <p>ב-Claude Desktop לחצו על <strong>+ Create skill</strong> בתפריט הצד. יפתח תפריט עם שלוש אפשרויות:</p>
+
+    <div class="callout info">
+      <div class="callout-title">ℹ️ הזמינות משתנה בין סביבות</div>
+      <p>המסלול למטה מתואר כפי שהוא נראה ב-Claude Desktop (נכון ליולי 2026). ב-Web, ב-Cowork וב-Claude Code הממשק עשוי להיראות אחרת — ולפעמים תלוי בתוכנית ובהרשאות הארגון. Skills שמריצים סקריפט דורשים גם הרשאת הרצת קוד (Code Execution). אם האפשרות לא מופיעה אצלכם — בדקו בהגדרות או שאלו את מי שמנהל את החשבון.</p>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <tr><th>אפשרות</th><th>מה היא עושה</th><th>מתאים כש...</th></tr>
+        <tr>
+          <td><strong>Create with Claude</strong></td>
+          <td>מתארים ל-Claude את המשימה בשפה רגילה — הוא כותב את ה-SKILL.md בשבילכם</td>
+          <td>פעם ראשונה, או כשאין זמן לכתוב לבד</td>
+        </tr>
+        <tr>
+          <td><strong>Write skill instructions</strong></td>
+          <td>כותבים את ההוראות בעצמכם, ישירות בטופס</td>
+          <td>יש לכם נוסח ברור ורוצים שליטה מלאה</td>
+        </tr>
+        <tr>
+          <td><strong>Upload a skill</strong></td>
+          <td>מעלים Skill מוכן מהמחשב — קובץ SKILL.md, או ZIP של התיקייה כשיש בה גם כלי עזר</td>
+          <td>קיבלתם קובץ מהצוות, או הורדתם Skill ממקור חיצוני</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="callout prompt">
+      <div class="callout-title">💬 Create with Claude — ככה זה נראה בפועל</div>
+      <p>פתחו <strong>Create with Claude</strong> ותארו בשפה רגילה:</p>
+      <p><em>"אני רוצה Skill שמחלץ action items מתמליל פגישה ומחזיר טבלה עם שלוש עמודות: משימה, אחראי, תאריך יעד. אם אחד מהם לא צוין — לכתוב &#8216;לא הוגדר&#8217;."</em></p>
+      <p>Claude כותב את ה-SKILL.md, מציג אותו לבדיקה — אתם עוברים עליו, מסכימים ושומרים. זהו.</p>
+    </div>
+
+    <div class="callout info">
+      <div class="callout-title">ℹ️ איפה Skills יושבים — ואיך משתפים</div>
+      <p>ה-Skills מוגדרים בהגדרות של Claude Desktop (תפריט <strong>Customize</strong>, לצד ה-Connectors מפרק 5), ועובדים באותו פורמט גם ב-Cowork וב-Claude Code.</p>
+      <p>הם נשמרים ב<strong>חשבון Claude</strong> שלכם — לא על מחשב ספציפי. תתחברו ממחשב אחר עם אותו חשבון, ותמצאו את אותם Skills.</p>
+      <p><strong>שיתוף:</strong> Skills הם פרטיים לחשבון. רוצים להעביר לעמית? ייצאו את ה-Skill כ-ZIP ושלחו — הוא יתקין אצלו דרך "Upload a skill". בארגון (Team/Enterprise) בעלים יכולים גם להקצות Skills לכל הצוות בבת אחת.</p>
+    </div>
+
+    <div class="callout warning">
+      <div class="callout-title">⚠️ ל-Skill משותף חייב להיות בעלים</div>
+      <p>Skill שכל הצוות משתמש בו הוא <strong>מסמך חי</strong>: טבלת הפרובים תתעדכן, מוסכמת השמות תשתנה. בלי כתובת אחת — תוך חצי שנה ירוצו בצוות שלוש גרסאות שונות, בדיוק הבעיה ש-Skill בא לפתור.</p>
+      <p>שני הרגלים פשוטים: <strong>בעלים אחד</strong> לכל Skill משותף (מי שמעדכן ומפיץ), ו<strong>שורת גרסה + תאריך</strong> בראש ה-SKILL.md — כך רואים בשנייה אם אתם על הגרסה העדכנית.</p>
+    </div>
+
+    <h2 id="ch3-5">3.5 לעבוד עם Skills בבטחה</h2>
+    <p>כמה דברים שכמעט אף מקור לא מזכיר — ושחשובים דווקא כשמתחילים להתקין ולהריץ Skills.</p>
+
+    <h3>נקודות בקרה — ל-Skill שעושה יותר מפעולה אחת</h3>
+    <p>אחרי שיש לכם Skill עובד, הפיתוי הוא לתת לו לרוץ חופשי. עדיף לא. בכל מקום בתהליך שטעות בו עולה זמן או כסף — תוסיפו <strong>נקודת בקרה</strong>: שלב שבו Claude עוצר, מראה מה עשה עד עכשיו, ומחכה לאישור שלכם לפני שהוא ממשיך. כך תופסים בעיה תוך שניות, במקום לגלות אותה כשכבר מאוחר. זה אותו עיקרון שמנחה את Cowork — עצירה לאישור לפני פעולה משמעותית.</p>
+
+    <div class="callout info">
+      <div class="callout-title">ℹ️ יש גם שער אוטומטי — ולא כדאי לכבות אותו בהיסח דעת</div>
+      <p>לפני ש-Claude מפעיל Skill שמריץ סקריפט, הוא לרוב <strong>יעצור וישאל</strong> — יציג לכם איזה Skill הוא רוצה להפעיל ומה הוא עומד להריץ. זה שער בטיחות טוב, והוא עובד לטובתכם.</p>
+      <p>לצידו תמצאו גם אפשרות בסגנון "אשר תמיד". היא נוחה מאוד — ולגיטימית ל-Skill שאתם מכירים, שכתבתם בעצמכם, ושרק קורא קבצים ומייצר פלט. <strong>לפני שלוחצים עליה, שאלו את עצמכם שאלה אחת:</strong> מה ה-Skill הזה יכול לעשות שאני לא ארצה לגלות אחר כך? אם התשובה היא "כלום, הוא רק מייצר לי טבלה" — קדימה. אם הוא נוגע במייל, בקבצים משותפים או במשהו שקשה לבטל — עדיף להישאר עם השאלה בכל פעם.</p>
+    </div>
+
+    <div class="callout warning">
+      <div class="callout-title">⚠️ אבטחה: Skill הוא הוראות ש-Claude מבצע</div>
+      <p>Skill אינו טקסט פסיבי — הוא הוראות ש-Claude מבצע בפועל. אם Claude מחובר למייל / לדרייב / לכלים שלכם, Skill זדוני יכול לפעול בשמכם (למשל לשלוח עותק של כל מייל לכתובת חיצונית) — ובלי לשאול. לכן:</p>
+      <ul>
+        <li><strong>תקראו את ה-SKILL.md לפני התקנה</strong> — את הקובץ עצמו, שורה-שורה. לא רק את התיאור.</li>
+        <li><strong>התקינו רק ממקורות שאתם סומכים עליהם</strong> — Anthropic, או יוצרים שאתם מכירים.</li>
+        <li><strong>לא בטוחים? בקשו מ-Claude:</strong> "תקרא את ה-Skill הזה ותגיד אם יש בו משהו חריג או מסוכן."</li>
+      </ul>
+      <p><strong>איום שני, עדין יותר — קלט זדוני (Prompt Injection):</strong> גם Skill תקין לחלוטין יכול לקבל קלט מורעל — קובץ או מסמך שמנסה לשכנע את Claude להתעלם מההוראות ולבצע משהו אחר. לכן כשSkill עובד עם מידע חיצוני, כדאי להגדיר לו במפורש אילו פעולות מותר לו לבצע, ומאילו "הוראות" שמגיעות מתוך הקבצים — להתעלם.</p>
+      <p>רוב ה-Skills שמשותפים ברשת לגיטימיים — אבל זה לא עולם של "להתקין ולשכוח".</p>
+    </div>
+
+    <h3>ומה קורה כשה-Skill נכשל?</h3>
+    <p>זו נקודה שקל לפספס, והיא רלוונטית במיוחד ל-Skill שמריץ סקריפט. אם משהו בסקריפט לא עובד — קובץ חסר, פורמט מפתיע, שגיאה — Claude לא בהכרח יעצור ויודיע. לפעמים הוא פשוט <strong>ימשיך בדרכו שלו</strong>: יעשה את המשימה כמיטב הבנתו, ויחזיר לכם תוצאה שנראית סבירה לגמרי. הכוונה שלו טובה — אבל התוצאה כבר לא הגיעה מהנוהל שסמכתם עליו.</p>
+
+    <div class="callout warning">
+      <div class="callout-title">⚠️ שתי הרגלים שסוגרים את הפער</div>
+      <ul>
+        <li><strong>לכתוב את זה בתוך ה-Skill:</strong> "אם הסקריפט נכשל — עצור, דווח מה קרה, ואל תבצע את החישוב ידנית."</li>
+        <li><strong>להסתכל על הפלט:</strong> תוצאה שהגיעה מסקריפט נראית אחרת מתוצאה שנוסחה בשיחה. אם קיבלתם טקסט חופשי במקום הקובץ שאתם רגילים לקבל — זה סימן ששווה לשאול "מאיפה הגיעו המספרים האלה?".</li>
+      </ul>
+      <p>לא צריך לחשוד בכל הרצה. אבל בפלט שנכנס למתקן בדיקה או למסמך שיוצא ללקוח — מבט של חצי דקה שווה את זה.</p>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-title">💡 מה פטר בעצם ארז כאן</div>
+      <p>פטר לא כתב "עזור לי עם ICT". הוא לקח שנים של ניסיון — "בחר לפי מרווח, לא לפי גודל", "T_TEST PIN לא רלוונטי", "אם הפורמט לא ידוע — עצור" — ותרגם אותן לכללים חד-משמעיים.</p>
+      <p>ושווה לשים לב מה בדיוק היה התפקיד שלו: <strong>הוא לא כתב את הסקריפט שורה-שורה.</strong> הידע ההנדסי — מה חשוב, מה לא, מתי עוצרים — הוא שלו, ואף אחד אחר בעולם לא יכול היה לספק אותו. הקוד הוא רק האריזה של הידע הזה. זו בדיוק הסיבה שזה פתוח בפניכם גם אם מעולם לא כתבתם שורת קוד.</p>
+      <p>עכשיו כל מי בצוות שמעלה netlist מקבל בדיוק את אותה רשימה. גם מי שעשה ICT פעם ראשונה בחיים.</p>
+    </div>
+
+        <hr>
+
+    <!-- ====== CHAPTER 4 ====== -->
+    <h1 id="ch4">פרק 4: כשה-AI מפסיק לענות ומתחיל לעבוד — סוכנים</h1>
+    <p>עד עכשיו Claude <em>ענה</em>: שאלנו, הוא החזיר תשובה, וזה נגמר שם. בפרק הזה הוא עושה משהו אחר — הוא <strong>עובד</strong>: גולש, קורא קבצים, מריץ קוד, עורך — וחוזר אליכם כשסיים. המושג שמסביר את כל זה נקרא <strong>סוכן (Agent)</strong>. נבין מה זה בדיוק, מתי זה רדוד ומתי עמוק, מה זה תת-סוכן, ובעיקר — איך לעבוד עם זה נכון ובבטחה.</p>
+
+    <div class="callout info">
+      <div class="callout-title">🎯 מטרות הפרק</div>
+      <ul>
+        <li>להבין מה הופך צ'אט רגיל ל<strong>סוכן</strong> — ולמה זה אותו רעיון פשוט מאחורי כל המונחים</li>
+        <li>להבחין בין סוכן <strong>רדוד</strong> (משימה קצרה) ל<strong>עמוק</strong> (מתכנן, רץ ארוך)</li>
+        <li>לדעת מה זה <strong>תת-סוכן</strong> ומתי סוכנים עובדים <strong>ברצף או במקביל</strong></li>
+        <li>ללמוד <strong>לכוון</strong> אותו בפרומפט וב-Skill — ו<strong>לראות</strong> מה הוא עושה תוך כדי</li>
+        <li>לשים <strong>גבולות בטיחות (Guardrails)</strong> כדי שטעות לא תהפוך לנזק</li>
+      </ul>
+    </div>
+
+    <hr>
+
+    <!-- ===== 4.1 ===== -->
+    <h2 id="ch4-1">4.1 מצ'אט לסוכן: לולאה אחת, רדודה או עמוקה</h2>
+
+    <h3>הלולאה: חשוב · פעל · צפה</h3>
+    <p>צ'אט רגיל עובד בסבב אחד: אתם שואלים, הוא עונה, סוף. <strong>סוכן</strong> עובד אחרת לגמרי — אתם נותנים לו <em>מטרה</em>, והוא רץ ב<strong>לולאה</strong> עד שהשיג אותה. הלולאה הזו היא כל הסיפור, והיא בנויה משלושה צעדים שחוזרים על עצמם:</p>
+
+    <div class="table-wrap">
+      <table>
+        <tr><th>צעד</th><th>מה קורה</th></tr>
+        <tr><td><strong>חשוב</strong></td><td>מה הצעד הבא שיקרב אותי למטרה?</td></tr>
+        <tr><td><strong>פעל</strong></td><td>מבצע פעולה <em>אמיתית</em> — חיפוש ברשת, קריאת קובץ, הרצת קוד, עריכה</td></tr>
+        <tr><td><strong>צפה</strong></td><td>מסתכל בתוצאה שחזרה — ואז חוזר ל"חשוב": סיימתי? אם לא, צעד נוסף</td></tr>
+      </table>
+    </div>
+    <p>וכך שוב ושוב — חשוב, פעל, צפה — עד שהמטרה הושגה. זה ההבדל היחיד והמהותי בין צ'אט שמדבר לבין סוכן שפועל. (ואם תפגשו בחוץ את המונח <strong>ReAct</strong> — קיצור של <em>Reason + Act</em>, "חשוב ופעל" — זו בדיוק הלולאה הזו, לא מנגנון נוסף שצריך ללמוד.)</p>
+
+    <div class="callout tip">
+      <div class="callout-title">💡 אנלוגיה: לשאול חבר מול לשלוח שליח</div>
+      <p>לשאול חבר "מה הכתובת של הספק?" זו שאלה אחת ותשובה אחת — צ'אט. לשלוח שליח עם משימה "תארגן לי את הפגישה עם הספק" זה משהו אחר: הוא יוצא, מתקשר, בודק יומן, חוזר ומתקשר שוב, ומגיע אליכם רק כשהכל סגור. הוא מקבל מטרה ורץ עד שסיים — זה סוכן.</p>
+    </div>
+
+    <h3>רדוד ועמוק: ההבדל הוא הלוח, לא השעון</h3>
+    <p>סוכן אחד מסיים בחצי דקה, אחר רץ שעה — אבל ההבדל המהותי ביניהם הוא לא הזמן, אלא <strong>מה כל אחד עושה עם הלוח שלו</strong>.</p>
+
+    <p>במשימה צרה בכמה צעדים ("חפש 3 ספקים לרכיב X והבא טבלה") הכול פשוט נערם על אותו לוח, וזה בסדר גמור — לזה קוראים לפעמים <strong>סוכן רדוד</strong>. אבל משימה ארוכה שתעבוד כך תיחנק: הלוח יתמלא, והאיכות תרד דווקא ככל שנאסף יותר חומר.</p>
+
+    <p><strong>סוכן עמוק</strong> בנוי מלכתחילה אחרת: הוא מתכנן מראש, מפרק לתת-משימות ומאציל אותן החוצה — כדי שהלוח המרכזי יישאר רזה. כמו ההבדל בין לשלוח מתמחה להביא דאטה-שיט אחד, לבין למסור לראש-צוות פרויקט שלם שהוא מתכנן בעצמו. האורך הוא רק התוצאה: דקות, ובכלי פיתוח גם שעות — ומשימה שרצה כמה דקות היא תקינה, לא תקועה.</p>
+
+    <p>שתי דוגמאות שכבר יש לכם: <strong>Deep Research</strong> ב-Claude Desktop, שמפרק שאלת מחקר אחת לעשרות חיפושים ומסכם לדוח; ו-<strong>Claude Code</strong> (ב-VS Code או בטרמינל), שקורא קבצים, עורך, מריץ ומתקן את עצמו לפי השגיאות עד שהמשימה עובדת. בשניהם אתם לא בוחרים "רדוד או עמוק" — הכלי והמצב שבחרתם קובעים. מה שכן בידיים שלכם הוא לכוון ולעצור, ועל זה 4.3.</p>
+
+    <p>וזה גם מה שהופך את הפרק הזה לחשוב: צ'אט שטועה מחזיר תשובה לא נכונה — מעצבן, אבל לא מסוכן. סוכן שטועה כבר <em>פעל בעולם</em>.</p>
+
+    <hr>
+
+    <!-- ===== 4.2 ===== -->
+    <h2 id="ch4-2">4.2 תת-סוכנים: ברצף, במקביל — ובוריאציות</h2>
+    <p>הסוכן שמדבר איתכם (ה<strong>סוכן הראשי</strong>) לא חייב לעשות הכול בעצמו. במשימות גדולות הוא פותח <strong>תת-סוכנים (Subagents)</strong>: כל אחד נולד למשימה אחת, מקבל רק את מה שרלוונטי לה, עובד על <em>לוח נקי משלו</em> — ומחזיר בחזרה סיכום קצר. זו בדיוק הבעיה מההקדמה, רק בכיוון ההפוך: במקום שהלוח של הראשי יתמלא ב-50 עמודי חיפוש (מה שנקרא <strong>זיהום הקשר</strong> — <em>Context Pollution</em>), כל חיפוש מקבל לוח נפרד שנזרק בסוף, והראשי מקבל חצי עמוד מזוקק ונשאר ממוקד.</p>
+
+    <div class="callout tip">
+      <div class="callout-title">💡 אנלוגיה: ראש צוות שמאציל קריאה</div>
+      <p>ראש צוות אומר לחוקר: "תקרא את 40 המאמרים ותביא לי סיכום של עמוד". הוא לא קורא בעצמו את כל ה-40 — הוא מקבל את הזיקוק, ושומר את הראש פנוי להחלטות. זה בדיוק תת-סוכן. וכשיש כמה נושאים עצמאיים — שולחים כמה חוקרים במקביל.</p>
+    </div>
+
+    <p>וזו בדיוק הדרך שבה סוכן עמוק שומר על עצמו רזה: הוא מאציל החוצה כדי שהלוח המרכזי יישאר פנוי להחלטות. יש <strong>שלוש דרכים</strong> להשתמש בזה:</p>
+
+    <div class="table-wrap">
+      <table>
+        <tr><th>הדרך</th><th>מתי</th><th>דוגמה</th></tr>
+        <tr><td><strong>ברצף</strong></td><td>הפלט של שלב מזין את הבא — אין קיצור דרך</td><td>"חקור ספקים ← בחר 3 ← השווה מחיר"</td></tr>
+        <tr><td><strong>במקביל</strong></td><td>החלקים בלתי-תלויים — רצים בו-זמנית, מהיר משמעותית</td><td>"סכם 8 דוחות כשל — כל דוח בנפרד"</td></tr>
+        <tr><td><strong>בוריאציות</strong></td><td>אותה משימה בכמה גישות — ואתם בוחרים</td><td>"4 ניסוחים לאותו סעיף במפרט"</td></tr>
+      </table>
+    </div>
+
+    <p>השתיים הראשונות הן חלוקת עבודה. <strong>השלישית שונה במהותה — והיא אולי הכי שימושית לכם:</strong> לא לפצל את המשימה בין כמה תת-סוכנים — אלא לתת ל<em>כולם את אותה משימה</em>, בגישות שונות, ולבחור. במקום לבקש ניסוח אחד ולתקן אותו שוב ושוב, מבקשים ארבעה ניסוחים מארבע זוויות ומשווים אותם זה מול זה. הדפוס הזה מוכר בעולם התוכנה כ-<em>best-of-N</em> — מריצים N וריאציות במקביל, ובוחרים את הטובה. התפקיד שלכם משתנה כאן: אתם לא מנסחים, אתם <strong>בוחרים</strong> — וזה תפקיד שאתם עושים הרבה יותר טוב ומהר.</p>
+
+    <div class="callout prompt">
+      <div class="callout-title">💬 דוגמה: ארבע גישות לסעיף במפרט</div>
+      <p>"מצורף תיאור הדרישה. כתוב לי <strong>4 ניסוחים שונים</strong> לסעיף הזה במפרט, כל אחד בגישה אחרת:<br>
+      · ממוקד ביצועים מדידים<br>
+      · ממוקד תנאי סביבה<br>
+      · ניסוח מינימלי שמשאיר חופש ליצרן<br>
+      · ניסוח הדוק שסוגר פרשנויות<br>
+      <strong>אל תמזג ביניהם</strong> — אני רוצה 4 חלופות נפרדות להשוואה. בסוף, טבלה קצרה: היתרון העיקרי והסיכון העיקרי של כל ניסוח."</p>
+      <p style="color:var(--text-muted);">אותו דפוס עובד על מבנה לדוח כשל, גישות לניתוח נתונים, או תשובה לספק — כל מקום שבו יש יותר מדרך אחת נכונה.</p>
+    </div>
+
+    <div class="callout info">
+      <div class="callout-title">🕐 מתי במקביל — ומתי לא</div>
+      <p>מקביליות היא לא "מצב מהיר יותר" של אותה עבודה — כל תת-סוכן הוא ריצה מלאה בפני עצמה. ארבע וריאציות עולות בערך פי ארבעה בצריכה (= ממכסת השימוש שלכם). <strong>שווה את זה</strong> כשהחלקים באמת עצמאיים, או כשההחלטה חשובה מספיק כדי לראות כמה חלופות. <strong>לא שווה</strong> כשיש תלות בין השלבים (אז זה פשוט לא יעבוד), או על משימה שגם ניסיון אחד היה פותר.</p>
+    </div>
+
+    <p><strong>ומה בשליטתכם?</strong> בצ'אט (Claude Desktop) תת-סוכנים קורים מתחת למכסה — למשל בתוך Deep Research — ואין "כפתור" להפעיל אותם. אבל הניסוח שלכם משפיע: כשתנסחו חלקים עצמאיים <em>כעצמאיים</em> ("עבור על כל דוח <strong>בנפרד</strong>, ורק בסוף אחֵד לטבלה") — אתם מעלים מאוד את הסיכוי לפיצול מקביל. ב-<strong>Claude Code</strong> בקשה מפורשת ("הפעל 3 סוכנים במקביל, אחד לכל דוח") היא כבר פקודה אמיתית שמתבצעת. ואם זה נוהל שחוזר — כותבים את הפיצול פעם אחת בתוך Skill, כמו כל נוהל אחר.</p>
+
+    <div class="callout warning">
+      <div class="callout-title">⚠️ תת-סוכן רואה רק את מה שמסרו לו</div>
+      <p>תת-סוכן הוא כמו <strong>קולגה שנכנס לחדר באמצע הישיבה</strong> — הוא לא שמע כלום ממה שנאמר קודם, ויודע רק מה שמסרו לו עכשיו. אם תוצאה של משימה מפוצלת "מפספסת" הקשר שהיה ברור לכם — נסחו מחדש כך שההקשר הקריטי יופיע במפורש בבקשה.</p>
+    </div>
+
+    <p>ולפני שעוברים לצד המעשי — שלושת המונחים במקום אחד. <strong>"סוכן"</strong> הוא מונח הגג לכל השלושה:</p>
+
+    <div class="table-wrap">
+      <table>
+        <tr><th>המונח</th><th>מה זה</th><th>מה קורה להקשר</th><th>איפה תפגשו</th></tr>
+        <tr>
+          <td><strong>סוכן רדוד</strong></td>
+          <td>לולאה קצרה, כמה צעדים, בלי תכנון מראש</td>
+          <td>הכול נשאר על אותו לוח</td>
+          <td>חיפוש ברשת בתוך שיחה רגילה</td>
+        </tr>
+        <tr>
+          <td><strong>סוכן עמוק</strong></td>
+          <td>מתכנן מראש, רץ ארוך, עוצר וממשיך, מאציל הלאה</td>
+          <td>מנהל את הלוח: מפצל, מזקק, שומר על עצמו רזה</td>
+          <td>Deep Research, Claude Code</td>
+        </tr>
+        <tr>
+          <td><strong>תת-סוכן</strong></td>
+          <td><strong>לא רמה שלישית — תפקיד.</strong> עוזר שסוכן עמוק שולח למשימה אחת (ובעצמו לרוב רדוד)</td>
+          <td>לוח נפרד משלו, שנזרק בסוף</td>
+          <td>מתחת למכסה, בתוך Deep Research</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="callout info">
+      <div class="callout-title">ℹ️ Skill או תת-סוכן? שניהם "מכינים" את Claude מראש — אבל לא לאותו דבר</div>
+      <p>קל לבלבל ביניהם, כי בשניהם כותבים הנחיות פעם אחת ו-Claude מפעיל אותן לבד. ההבדל הוא <em>מה</em> כל אחד נותן:</p>
+      <div class="table-wrap">
+        <table>
+          <tr><th></th><th>Skill</th><th>תת-סוכן</th></tr>
+          <tr><td><strong>מה הוא נותן</strong></td><td>נוהל — <em>איך</em> לבצע את המשימה</td><td>עוזר שמבצע משימה שלמה בנפרד</td></tr>
+          <tr><td><strong>מה קורה להקשר</strong></td><td><strong>רץ על הלוח הראשי. אין הפרדה</strong> — כל מה שהוא מביא נכנס לשיחה שלכם</td><td>לוח נפרד משלו, שנזרק בסוף; חוזר עם סיכום</td></tr>
+          <tr><td><strong>מתי לבחור</strong></td><td>כשחשוב ש<strong>אותה שיטה</strong> תופעל בעקביות</td><td>כשהמשימה <strong>כבדה</strong> ותציף את הלוח הראשי</td></tr>
+        </table>
+      </div>
+      <p>בקצרה: <strong>שיטה חוזרת ← Skill. משימה כבדה ← תת-סוכן.</strong> והם לא מתחרים — נוהל שכתבתם ב-Skill יכול בהחלט לכלול הוראה לפצל את העבודה לתת-סוכנים.</p>
+    </div>
+
+    <p style="color:var(--text-muted); font-size:13.5px;">(למתקדמים: ב-Claude Code אפשר להגדיר תת-סוכן קבוע — קובץ בתיקייה <code dir="ltr">.claude/agents/</code> שמכיל את ההנחיות שלו, סט כלים מצומצם, ותיאור של <em>מתי</em> להפעיל אותו; הסוכן הראשי קורא לו לבד כשהמשימה מתאימה. שם גם ה-Skills יכולים לשבת בתוך תיקיית הפרויקט ולעבור בין אנשי הצוות יחד עם הקוד, ולא רק דרך החשבון האישי. וכללית: המנגנון שתואר בסעיף הזה הוא של Claude; לכלי AI אחרים יש מימוש משלהם, שלא בהכרח עובד כך.)</p>
+
+    <hr>
+
+    <!-- ===== 4.3 ===== -->
+    <h2 id="ch4-3">4.3 לעבוד נכון עם סוכן: לכוון ולראות</h2>
+    <p>זה החלק הכי מעשי בפרק — תכלס מה <em>אתם</em> עושים מול סוכן. שני דברים, בסדר שבו הם קורים: <strong>לכוון</strong> אותו מראש, בפרומפט וב-Skill (4.3.1), ואז <strong>לראות</strong> מה הוא עושה בזמן אמת ולתקן תוך כדי (4.3.2).</p>
+
+    <h3 id="ch4-3-1">4.3.1 לכוון מראש: בפרומפט וב-Skill</h3>
+    <p>פרומפט טוב <em>לסוכן</em> — להבדיל משאלה לצ'אט — עומד על ארבעה דברים:</p>
+
+    <div class="table-wrap">
+      <table>
+        <tr><th>רכיב</th><th>למה</th><th>דוגמה</th></tr>
+        <tr><td><strong>מטרה מדידה</strong></td><td>שיֵדע מתי סיים</td><td>"שלוש חלופות עם מחיר וזמינות" (לא "תחקור קצת")</td></tr>
+        <tr><td><strong>הקשר ואילוצים</strong></td><td>שיחפש את הנכון</td><td>"רק ספקים עם תקן RoHS"</td></tr>
+        <tr><td><strong>גבולות</strong></td><td>מה אסור לו לגעת</td><td>"אל תזמין, אל תיגע בקבצים מחוץ לתיקיית הקוד הראשית"</td></tr>
+        <tr><td><strong>קריטריון עצירה</strong></td><td>מתי לעצור ולשאול אתכם</td><td>"אם אין 3 חלופות שעומדות בתנאי — עצור ושאל"</td></tr>
+      </table>
+    </div>
+
+    <div class="callout prompt">
+      <div class="callout-title">💬 תבנית לבקשה מסוכן — שמרו אותה</div>
+      <p>[מטרה מדידה] · [הקשר ואילוצים] · [גבולות — מה אסור] · [מתי לעצור ולשאול]</p>
+      <p style="color:var(--text-muted);">דוגמה: "מצא 3 חלופות לרכיב X עם מחיר וזמינות · רק ספקים מאושרי RoHS · אל תבצע הזמנה · אם אין 3 שעומדות בתנאי, עצור והצג לי מה שמצאת."</p>
+    </div>
+
+    <p>ושימו לב מה קורה כשקריטריון העצירה נתפס: הסוכן <em>לא</em> מתחיל מהתחלה. הוא עוצר, מציג מה יש לו, ואחרי שתשלימו את החסר — ממשיך מאותה נקודה. לכן "עצור ושאל" הוא לא ויתור על המשימה, אלא הדרך הזולה לתקן אותה באמצע.</p>
+
+    <p>ואם זו בקשה שחוזרת — את ארבעת הרכיבים אפשר לכתוב פעם אחת בתוך <strong>Skill</strong> (פרק 3), כולל הגבולות וקריטריון העצירה, במקום לחזור עליהם בכל בקשה מחדש.</p>
+
+    <p>ויש התערבות אחת נוספת שקורית עוד לפני שהוא מתחיל, והיא הזולה מכולן: <strong>לבקש את התוכנית.</strong> סוכן עמוק לא מאלתר צעד-צעד — הוא בונה לעצמו רשימת משימות ועובד לפיה — וממשיך לעדכן אותה תוך כדי: מסמן מה הושלם, ומתכנן מחדש כשצעד נכשל. בדיוק בגלל זה עצירה באמצע לא מאבדת את מה שכבר נעשה. בכלי פיתוח (Claude Code ב-VS Code) הרשימה מוצגת לכם וגם מסומנת תוך כדי; ב-Claude Desktop היא לרוב נשארת מתחת למכסה — אלא אם תבקשו אותה במפורש. וכדאי: לתקן שורה בתוכנית לוקח 10 שניות, לתקן תוצאה שנבנתה על תוכנית שגויה לוקח סבב שלם.</p>
+
+    <div class="callout prompt">
+      <div class="callout-title">💬 לראות את התוכנית לפני שהוא רץ</div>
+      <p><em>"לפני שאתה מתחיל: פרט תוכנית של 3–5 צעדים — מה תבדוק, באיזה סדר, ומאיפה תביא את המידע. עצור ואל תתחיל עד שאאשר."</em></p>
+      <p style="color:var(--text-muted);">העיקרון: לוודא הבנה לפני עבודה — כאן בודקים שהסוכן בחר את <em>דרך העבודה</em> הנכונה לפני שהתחיל לרוץ. (נפגוש את אותו הרגל שוב ב-6.1, "שאלת העצירה", בגרסת הצ׳אט.)</p>
+    </div>
+
+    <p>ומכאן, שלוש רמות התערבות לפי סדר העלות: לתקן את <strong>התוכנית</strong> מראש (הכי זול) ← לעצור <strong>תוך כדי ריצה</strong> כשרואים סטייה ← לפתוח <strong>שיחה חדשה</strong> אם התוצאה כבר יצאה שגויה. את הראשונה עשיתם כאן; שתי האחרות קורות כבר בזמן ריצה — והן הסעיף הבא.</p>
+
+    <h3 id="ch4-3-2">4.3.2 לראות ולאמת בזמן ריצה</h3>
+    <p>כשסוכן רץ, אתם רואים זרם של צעדים: "חיפשתי X", "קראתי את הקובץ Y", "מריץ בדיקה...". זה לא קישוט — זה <strong>החלון שלכם פנימה</strong>. אל תדלגו עליו. הנה מה לחפש:</p>
+
+    <div class="table-wrap">
+      <table>
+        <tr><th>מה לבדוק</th><th>סימן אזהרה</th></tr>
+        <tr><td>הבין את המטרה הנכונה?</td><td>כבר בצעד הראשון יוצא לכיוון לא נכון</td></tr>
+        <tr><td>מתקדם, או תקוע?</td><td>חוזר שוב ושוב על אותו צעד בלי להתקדם (סוכן תקין שנכשל <em>משנה גישה</em>; חזרה עיוורת היא הסימן)</td></tr>
+        <tr><td>נצמד לעובדות?</td><td>מניח או "ממציא" פרטים שלא נתתם לו</td></tr>
+      </table>
+    </div>
+
+    <div class="callout info">
+      <div class="callout-title">🔬 תרחיש: רואים סוכן עובד — חלופה לרכיב שיצא מ-EOL</div>
+      <p>רכיב שאתם משתמשים בו יצא מ-<strong>EOL</strong> (<em>End of Life</em> — היצרן הפסיק לייצר אותו), ואתם מבקשים מ-Claude Desktop למצוא חלופה. הוא יוצא לעבוד, וזה הזרם שמופיע לכם על המסך, צעד אחר צעד:</p>
+      <ul>
+        <li><strong>חיפש</strong> ברשת "alternatives for [שם הרכיב]" — מצא 5 מועמדים</li>
+        <li><strong>קרא</strong> את הדאטה-שיט של מועמד 1 — בדק מתח עבודה ומספר פינים</li>
+        <li><strong>קרא</strong> דאטה-שיט של מועמד 2…</li>
+        <li><strong>בונה</strong> טבלת השוואה</li>
+      </ul>
+      <p>אתם מסתכלים על הצעד הראשון ותופסים בעיה: הוא חיפש לפי <em>השם הגנרי</em> של הרכיב, לא לפי ה-<strong>part number</strong> המדויק — וכל חמשת המועמדים שהביא הם מאותה משפחה, אבל אף אחד מהם לא תואם פין-לפין. סימן האזהרה מהטבלה למעלה: <strong>"הבין את המטרה הנכונה?"</strong> — לא לגמרי.</p>
+      <p><strong>מה עושים:</strong> עוצרים אותו עכשיו (לא בעוד שתי דקות כשהטבלה מוכנה), ומחדדים — "רק חלופות תואמות פין-לפין למספר החלק המדויק". הוא יוצא שוב, הפעם לכיוון הנכון.</p>
+      <p style="color:var(--text-muted); font-size:13.5px;">שימו לב: לאורך כל התרחיש הוא רק <em>חקר וקרא</em> — לא הזמין כלום ולא שינה דבר. זו פעולה הפיכה לחלוטין (על זה ב-4.4, Guardrails), ולכן בטוח לתת לו לרוץ ולתקן תוך כדי.</p>
+    </div>
+
+    <div class="callout info">
+      <div class="callout-title">🕐 ואם כבר סיים — לתקן או להתחיל מחדש?</div>
+      <p>לפעמים תופסים את הטעות רק בסוף, אחרי שש דקות ריצה. האינסטינקט הוא לכתוב "לא, התכוונתי לפין-לפין" באותה שיחה — וזו לרוב טעות: הלוח כבר מלא בחמישה מועמדים לא רלוונטיים ובהיגיון שהוביל אליהם, והם ימשיכו למשוך אותו לשם. <strong>שיחה חדשה עם הפרומפט המתוקן</strong> כמעט תמיד תיתן תוצאה נקייה יותר, ולוקחת בדיוק אותו זמן. תקנו באותה שיחה רק כשהכיוון הכללי היה נכון והתיקון הוא בשוליים.</p>
+    </div>
+
+    <hr>
+
+    <!-- ===== 4.4 ===== -->
+    <h2 id="ch4-4">4.4 Guardrails — מעקות בטיחות</h2>
+    <p><strong>Guardrails</strong> (מילולית: "מעקות בטיחות") הם הגבולות שמונעים מטעות של סוכן להפוך לנזק. ככל שנותנים לסוכן לעשות יותר — כך הם חשובים יותר, כי הוא כבר לא רק מדבר, הוא <em>פועל</em>.</p>
+
+    <p>העיקרון המארגן פשוט: <strong>מיינו פעולות לפי כמה קל לבטל אותן.</strong></p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>סוג פעולה</th><th>סיכון</th><th>מה לעשות</th></tr>
+        <tr><td>קריאה / חיפוש / ניתוח</td><td>נמוך — לא משנה כלום בעולם</td><td>לתת לרוץ חופשי</td></tr>
+        <tr><td>כתיבה מקומית (קובץ, טיוטה, קוד)</td><td>בינוני — הפיך אבל צריך לבדוק</td><td>לקרוא את התוצאה (review) לפני שמאשרים</td></tr>
+        <tr><td>שליחה / מחיקה / commit+push / רכישה / שינוי הרשאות</td><td>גבוה — בלתי-הפיך</td><td><strong>אישור אנושי מפורש</strong> — הסוכן מציע, אתם מאשרים</td></tr>
+      </table>
+    </div>
+    <p style="color:var(--text-muted); font-size:14px; margin-top:-4px;">("commit+push" = שמירת שינויי הקוד ושיתופם במאגר המשותף. ה-commit עצמו מקומי; רק ה-push מגיע לשאר הצוות — ולכן הצמד הזה בקטגוריה הגבוהה.)</p>
+
+    <p>וכמה כללים שמיישמים את זה ביומיום:</p>
+    <ul>
+      <li><strong>הרשאות מינימליות (<em>Least Privilege</em>).</strong> תנו לסוכן גישה רק למה שהמשימה צריכה — סוכן שמנתח דוחות לא צריך גישה למייל. וזו לא רק שאלה של בטיחות: <strong>כלי מיותר הוא גם פיתוי</strong>. ככל שיש יותר כלים על השולחן, כך גדל הסיכוי שהסוכן יבחר בלא נכון, ותיאורי הכלים עצמם תופסים מקום יקר על הלוח. פחות כלים = סוכן בטוח יותר <em>וגם</em> מדויק יותר.</li>
+      <li><strong>Review לפני commit — תמיד.</strong> בקוד, קראו את ה-<strong>diff</strong> (רשימת השינויים המדויקת) לפני ששומרים. בתוכן, קראו לפני ששולחים.</li>
+      <li><strong>גבול מפורש בפרומפט/Skill.</strong> חזרה ל-4.3 — "אל תיגע ב-X" שכתוב מראש הוא ה-Guardrail הזול והיעיל ביותר.</li>
+      <li><strong>אל תאשרו אוטומציה שאתם לא יודעים לבטל.</strong> אם אתם לא בטוחים איך מחזירים את המצב לאחור — זו פעולה שדורשת אישור ידני.</li>
+    </ul>
+
+    <div class="callout warning">
+      <div class="callout-title">⚠️ אותו כלל, כשלסוכן יש ידיים</div>
+      <p>ב-3.5 ראינו שקובץ ממקור לא מוכר הוא הוראות ש-Claude מבצע. אצל סוכן זה מחריף: הוא כבר לא רק עונה, הוא <em>פועל</em> — אז הוראה מוזרקת יכולה להפוך לשליחה או למחיקה, לא רק לתשובה שגויה.</p>
+      <p><strong>הכלל בשורה אחת:</strong> חומרת הסיכון = <strong>המקור × ההרשאות</strong>. תוכן ממקור לא מוכר כשלסוכן יש גישת קריאה בלבד — לא יגרום נזק ישיר, אבל עדיין יכול להטות את הניתוח שתקבלו בסוף, ולכן גם אותו בודקים. אותו תוכן כשיש לו גישה למייל — סיפור אחר לגמרי.</p>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-title">💡 הפרק בשני משפטים</div>
+      <p><strong>מה זה סוכן:</strong> צ'אט שרץ בלולאה (חשוב·פעל·צפה) עד שהמטרה הושגה — רדוד או עמוק, מאציל לתת-סוכנים, ועובד ברצף, במקביל, או בכמה וריאציות שאתם בוחרים מתוכן.</p>
+      <p><strong>תפקידכם:</strong> סוכן עובד <strong>בשבילכם, לא במקומכם</strong> — לכוון אותו במטרה–גבולות–עצירה, לראות מה הוא עושה, ולשמור את ההחלטות הבלתי-הפיכות בידיים שלכם.</p>
+    </div>
+
+    <hr>
+
+    <!-- ===== 4.5 ===== -->
+    <h2 id="ch4-5">4.5 תכל'ס: שלושה תרחישים להרצה מיידית</h2>
+    <p>בשני המשפטים למעלה יש את כל הפרק. עכשיו הצד המעשי: שלושה מצבים אמיתיים מעולם ה-R&D שאפשר להריץ כבר עכשיו — כל אחד בכלי שמתאים לו. את הראשון כבר ראינו על המסך ב-4.3; הנה שלושתם יחד, עם הפרומפט המלא מוכן להעתקה. כולם נשענים על אותה תבנית מ-4.3.1: <strong>מטרה · הקשר ואילוצים · גבולות · מתי לעצור</strong>.</p>
+
+    <h3>תרחיש 1 · מחקר חלופה לרכיב שיצא מ-EOL</h3>
+    <p><strong>הכלי:</strong> Claude Desktop עם חיפוש רשת מופעל (מפעילים בתפריט הכלים של תיבת ההקלדה). <strong>המצב:</strong> רכיב שאתם משתמשים בו הגיע ל-<strong>EOL</strong>, ובמקום לפתוח 15 לשוניות ב-Mouser ולהשוות ידנית — Claude עושה את זה מקצה לקצה. ב-4.3 ראינו את הזרם על המסך ואיך עוצרים ומכוונים אותו תוך כדי; הנה הפרומפט שמתחיל את זה:</p>
+    <div class="callout prompt">
+      <div class="callout-title">💬 פרומפט להעתקה</div>
+      <p>"מצורף ה-<strong>datasheet</strong> (דף הנתונים של הרכיב) של [מספר החלק המדויק — <em>part number</em>]. הרכיב יצא מ-EOL. מצא לי <strong>3 חלופות</strong> שזמינות היום ב-Mouser או Digi-Key ומקיימות:<br>
+      · אותו <strong>package</strong> (מארז) ותצורת פינים<br>
+      · מתח עבודה זהה, בטווח ±10%<br>
+      · טמפרטורת עבודה של לפחות –40°C עד +85°C<br>
+      החזר <strong>טבלה</strong>: מספר חלק · יצרן · מחיר ל-100 יח' · זמן אספקה · הערות על סטיות מהמקור.<br>
+      אל תבצע הזמנה. אם אין 3 חלופות שעומדות בכל התנאים — עצור והצג לי מה שכן מצאת."</p>
+    </div>
+    <p>ומה עושים עם התוצאה: מספרי מחיר וזמינות משתנים יומיומית, וזה בדיוק סוג הפרט שהמודל עלול "לירות" עליו הערכה. אמתו אותם מול הספק — הטבלה היא נקודת פתיחה, לא הזמנת רכש.</p>
+
+    <h3>תרחיש 2 · דפוסים ב-8 דוחות כשל בבת אחת</h3>
+    <p><strong>הכלי:</strong> Claude Desktop — פשוט גוררים את הקבצים לתוך השיחה. <strong>המצב:</strong> יש לכם ערימת דוחות כשל מהייצור או מהשטח, ואתם רוצים לדעת אם מסתתר בהם דפוס — בלי לקרוא את כולם ידנית. זה בדיוק המקום לפצל לחלקים בלתי-תלויים (חזרה ל-4.2): כל דוח בנפרד, ואז איחוד.</p>
+    <div class="callout prompt">
+      <div class="callout-title">💬 פרומפט להעתקה</div>
+      <p>"מצורפים 8 דוחות כשל מהרבעון האחרון. <strong>עבור על כל דוח בנפרד</strong> וחלץ לכל אחד: הרכיב שכשל · אופן הכשל (<em>failure mode</em>) · התנאים שבהם קרה (טמפרטורה, מתח, זמן עבודה). <strong>ואז אחֵד</strong> לטבלה אחת, וספר לי: מהם 3 אופני הכשל הנפוצים ביותר, והאם מישהו מהם מתואם ל<strong>אצווה (batch) או לתאריך ייצור מסוים</strong>.<br>
+      אם נתון חסר בדוח — סמן 'לא צוין', אל תשלים בניחוש."</p>
+    </div>
+    <p>מה שחוזר הוא סינון ראשוני ו<em>מועמד</em> לדפוס — לא מסקנה. "זו אצווה פגומה" היא קביעה שלכם, אחרי שאימתתם אותה מול הנתונים הגולמיים.</p>
+
+    <h3>תרחיש 3 · הערכת טכנולוגיה עם Deep Research</h3>
+    <p><strong>הכלי:</strong> <strong>Deep Research</strong> — מצב ב-Claude Desktop שבו, במקום תשובה מיידית, Claude מריץ חיפושים רבים ואיטרטיביים (באותו היגיון של פיצול עבודה שראינו ב-4.2), קורא עשרות מקורות, ומחזיר דו"ח מסודר <strong>עם מקורות</strong>. לוקח כמה דקות — ומתאים כשההחלטה שווה את זה. <strong>המצב:</strong> אתם שוקלים טכנולוגיה או ספק חדש להחלטת תכן, ורוצים תמונה מבוססת ולא את הרושם מ-3 הקישורים הראשונים בגוגל.</p>
+    <div class="callout prompt">
+      <div class="callout-title">💬 פרומפט להעתקה</div>
+      <p>"אני מעריך את [טכנולוגיה / פרוטוקול X] מול [Y] עבור [השימוש הספציפי שלכם]. חקור לעומק את המצב הנוכחי: <strong>בשלות</strong> הטכנולוגיה, היצרנים/ספקים המובילים, טווח מחירים טיפוסי, המגבלות העיקריות, ומי בתעשייה כבר משתמש בזה. החזר <strong>טבלת השוואה עם מקורות</strong>, ולסיום המלצה מנומקת — כולל באילו תנאים היא <em>לא</em> מתאימה."</p>
+    </div>
+    <div class="callout warning">
+      <div class="callout-title">⚠️ קִראו את המקורות, לא רק את המסקנה</div>
+      <p>דו"ח Deep Research נראה סמכותי — וזו בדיוק הסכנה. הוא אוסף מהרשת, והרשת טועה. לפני שמצטטים אותו בהחלטת תכן, פִתחו 2–3 מהמקורות שהוא הביא וּודאו שהם באמת אומרים מה שהוא טוען. זו אותה עֵרנוּת שנדרשת מול הזיות — רק שכאן היא מופנית לדו"ח שלם; נעמיק בה בפרק "מתי לא לסמוך".</p>
+    </div>
+
+        <hr>
+
+    <!-- ====== CHAPTER 5 ====== -->
+    <h1 id="ch5">פרק 5: חיבור לעולם שלך</h1>
+    <p>עד עכשיו עבדנו עם מה שהבאנו ל-Claude בעצמנו: הדבקנו טקסט, צירפנו קובץ, ביקשנו חיפוש ברשת. הפרק הזה עושה צעד אחד קדימה — לתת ל-Claude גישה <strong>ישירה</strong> למערכת שאתם כבר עובדים איתה, כך שלא תצטרכו להעתיק-להדביק כל פעם מחדש. החיבור הזה נקרא <strong>קונקטור</strong> (Connector — "מחבר").</p>
+    <p>הרעיון פשוט: במקום שתפתחו את המייל, תחפשו שרשור, תעתיקו אותו ותדביקו ל-Claude — אתם פשוט אומרים ל-Claude "תסתכל בעצמך". הוא ניגש למערכת, מוצא את מה שצריך, ועובד מולו.</p>
+
+    <div class="callout info">
+      <div class="callout-title">🎯 מטרות הפרק</div>
+      <ul>
+        <li>להבין מה זה <strong>קונקטור</strong> — וכיצד הוא חוסך את ההעתק-הדבק</li>
+        <li>לראות מה הכי שימושי בפועל לעבודה שלכם — <strong>מייל</strong> ו<strong>מסמכים</strong></li>
+        <li>לזכור את הגבול החשוב: Claude <strong>מנסח ומציע</strong> — אתם <strong>שולחים</strong></li>
+      </ul>
+    </div>
+
+    <div class="callout info">
+      <div class="callout-title">ℹ️ הערה לפני שמתחילים: הפרק הזה קצר בכוונה</div>
+      <p>קונקטורים זה כלי נחמד, אבל לרובכם הוא יהיה שימוש <em>מדי פעם</em>, לא יומיומי. לכן הפרק הזה תכליתי — נתמקד בשני דברים שבאמת רלוונטיים לכם, ובסופו נסביר את שני המונחים שתשמעו מסביב (MCP ו-Hooks) ברמה שמספיקה כדי להחליט אם הם נוגעים לכם. אם בסוף תשתמשו בזה פעם-פעמיים בשבוע במקום להעתיק-להדביק ידנית — כבר יצאתם נשכרים.</p>
+    </div>
+
+    <hr>
+
+    <!-- ===== 5.1 ===== -->
+    <h2 id="ch5-1">5.1 מייל (Outlook) — הקונקטור שהכי כדאי להכיר</h2>
+    <p>זה כנראה החיבור הכי רלוונטי לרובכם, מסיבה פשוטה: המייל הוא מקום שכולם נמצאים בו, וחלק גדול מהעבודה מולו הוא <em>קריאה וסיכום</em> — וזו בדיוק הפעולה הכי בטוחה שיש (היא לא משנה כלום, רק קוראת). אז זה מקום מצוין להתחיל בו.</p>
+    <p>הנה מה שאפשר לעשות, ודוגמה מוחשית לכל אחד:</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>מה אפשר לבקש</th><th>דוגמה מהיומיום</th></tr>
+        <tr><td><strong>לסכם שרשור ארוך</strong></td><td>"סכם לי את השרשור עם הספק על עיכוב הרכיבים — מה סוכם בסוף ומי אחראי על מה"</td></tr>
+        <tr><td><strong>לחפש ולמשוך מידע</strong></td><td>"מצא את המייל שבו שלחו את מחירון הלוחות המודפסים מהחודש שעבר"</td></tr>
+        <tr><td><strong>לעשות סדר בשבוע</strong></td><td>"מה ביקשו ממני במייל השבוע ועדיין לא טיפלתי בו?"</td></tr>
+        <tr><td><strong>לנסח טיוטת תשובה</strong></td><td>"כתוב טיוטת תשובה מנומסת שמבקשת מהספק לוח זמנים מעודכן" <em>(טיוטה בלבד — ראו אזהרה למטה)</em></td></tr>
+      </table>
+    </div>
+
+    <div class="callout prompt">
+      <div class="callout-title">💬 דוגמת פרומפט — סיכום שרשור</div>
+      <p>"קרא את שרשור המייל האחרון עם [שם הספק]. סכם בנקודות: מה הוחלט, אילו תאריכים נקבעו, ומה הפעולה שמצופה ממני. אם משהו נשאר פתוח בלי החלטה — ציין את זה בנפרד."</p>
+      <p style="color:var(--text-muted);">שימו לב לעיקרון מפרק 2: ביקשנו פורמט מדויק (נקודות, מה הוחלט, מה פתוח) — לא "תסכם לי את זה". ככל שהבקשה ממוקדת יותר, הסיכום שימושי יותר.</p>
+    </div>
+
+    <div class="callout warning">
+      <div class="callout-title">⚠️ Claude מנסח — אתם שולחים</div>
+      <p>זו בדיוק האזהרה מפרק 4 (Guardrails), עכשיו על מערכת אמיתית: ברגע ש-Claude מחובר למייל, מבחינה טכנית הוא <em>יכול</em> גם לשלוח. אבל שליחה היא פעולה <strong>בלתי-הפיכה</strong> — אי אפשר להחזיר מייל שיצא. לכן הכלל פשוט: תנו לו לקרוא, לסכם ולנסח כמה שתרצו, אבל את כפתור ה<strong>שליחה</strong> לוחצים <strong>אתם</strong>, אחרי שקראתם את הטיוטה. הוא העוזר שמכין את המכתב; החתימה נשארת שלכם.</p>
+    </div>
+
+    <p>איך מפעילים את זה בכלל? החיבור מתבצע פעם אחת, דרך הגדרות הקונקטורים, ובדרך כלל הארגון/IT הם שמאשרים אותו. אם אתם לא רואים את האפשרות — זה כנראה עניין של הרשאה ארגונית, ושווה לשאול את מי שמנהל את זה אצלכם. אחרי שהחיבור קיים, פשוט מבקשים מ-Claude בשפה רגילה והוא ניגש בעצמו.</p>
+
+    <div class="callout warning">
+      <div class="callout-title">⚠️ מה החיבור חושף — ומי רואה?</div>
+      <p>השאלה שעולה מיד: "אם חיברתי את Claude למייל — הוא קורא הכול? זה הולך לאימון?" שלוש עובדות שכדאי להכיר:</p>
+      <ul>
+        <li>הגישה קורית <strong>בתוך שיחות, לפי מה שביקשתם</strong> — Claude ניגש למייל כשאתם שולחים בקשה שדורשת זאת, לא סורק ברקע.</li>
+        <li>בחשבון הארגוני (Team / Enterprise) השיחות <strong>לא משמשות לאימון מודלים</strong>.</li>
+        <li>חיבור אפשר <strong>לנתק בכל רגע</strong> בהגדרות הקונקטורים.</li>
+      </ul>
+      <p>וכלל אחד שנשאר בתוקף: אותו שיקול דעת שאתם מפעילים על "מה מעלים ומה לא" תקף גם כאן — חיבור נוח לא הופך מידע רגיש לפחות רגיש.</p>
+    </div>
+
+    <hr>
+
+    <!-- ===== 5.2 ===== -->
+    <h2 id="ch5-2">5.2 מסמכים וקבצים — אם יש לכם חיבור, זה הכלי החזק ביותר</h2>
+    <p>הקונקטור השני ששווה להכיר הוא חיבור ל<strong>מאגר המסמכים</strong> שלכם — תיקיות משותפות, SharePoint, דרייב, או כל מקום שבו יושבים הקבצים. הניסוח "אם יש לכם" מכוון — זה תלוי במה שהארגון חיבר, ולא בטוח שזה זמין לכם — אבל אם כן, <em>בשבילכם כמהנדסים זה הכלי החזק ביותר בפרק</em>.</p>
+    <p>הסיבה: מהנדס חשמל חי בתוך מסמכים — דאטה-שיטים, מפרטים, תקנים, דוחות בדיקה. ברגע ש-Claude יכול לחפש בתוכם בעצמו, נפתחות בקשות כמו:</p>
+    <ul>
+      <li>"מצא במאגר את כל הדאטה-שיטים של רכיבי ה-DC/DC ותגיד לי אילו מהם תומכים בכניסה של 48 וולט"</li>
+      <li>"השווה את שלושת המפרטים האלה — איפה הם נבדלים בטמפרטורת העבודה ובצריכת הזרם?"</li>
+      <li>"איזה דוח בדיקה התייחס לכשל ההלחמה בלוח הגרסה הקודמת?"</li>
+    </ul>
+    <p>זה בדיוק התרחיש שראינו בפרק 4 (חיפוש חלופה לרכיב ב-EOL), רק שעכשיו החיפוש הוא בתוך <em>המאגר שלכם</em>, לא רק ברשת הפתוחה.</p>
+
+    <div class="callout info">
+      <div class="callout-title">🕐 לא בטוחים אם יש לכם את זה?</div>
+      <p>זה לגיטימי לחלוטין לא לדעת — חיבור מסמכים מוגדר ברמת הארגון. הדרך הכי פשוטה לבדוק: פתחו את הגדרות הקונקטורים וראו אם מופיע שם חיבור לדרייב / SharePoint / תיקיות. אם לא — שאלה קצרה ל-IT תענה. ואם אין כרגע — לא נורא; המייל מ-5.1 כבר נותן ערך בלי זה.</p>
+    </div>
+
+    <hr>
+
+    <!-- ===== 5.3 ===== -->
+    <h2 id="ch5-3">5.3 מה עוד קיים — והמונחים שכדאי להכיר</h2>
+    <p>שלמות התמונה: יש עוד קונקטורים בעולם — חיבור ל<strong>יומן</strong>, ל-<strong>Slack</strong>, ולכלי פיתוח כמו <strong>GitHub</strong> ו-<strong>Jira</strong>. הם שימושיים מאוד לצוותי תוכנה, אבל פחות רלוונטיים לעבודה היומיומית שלכם — אז רק תדעו שהם קיימים, ואם תיתקלו בשם כזה, זה אותו רעיון בדיוק: שקע ישיר למערכת.</p>
+
+    <div class="callout info">
+      <div class="callout-title">ℹ️ המונח שמסתובב מסביב: MCP</div>
+      <p>בטח שמעתם את ראשי התיבות <strong>MCP</strong>. זה ה<em>תקן</em> שמאחורי כל הקונקטורים — בדיוק כמו ש-USB-C הוא התקן שמאפשר לחבר כל מטען לכל מכשיר. אתם לא צריכים לדעת איך USB-C בנוי בפנים כדי לטעון טלפון, ובדיוק כך — לא צריך להכיר MCP כדי להשתמש בקונקטור.</p>
+      <p>מה שכן שווה לדעת: קונקטור הוא בפועל <strong>שרת MCP</strong> — תוכנה קטנה שיושבת מול המערכת (המייל, המאגר) ומציגה ל-Claude בצורה אחידה מה אפשר לעשות שם. ובגלל שזה תקן ולא פתרון ייחודי, אותו <em>רעיון חיבור</em> עובד ב-Claude Desktop, ב-Cowork וב-Cursor — אם כי ההתקנה, האימות וההרשאות תלויים בלקוח ובארגון. שרת MCP יכול לרוץ גם <strong>מקומית</strong> על המחשב שלכם: למשל מול סקריפט Python שאתם כבר מריצים לניתוח תוצאות בדיקה — בלי להעלות כלום לענן.</p>
+      <p>ומתי זה כן נוגע לכם: אם יש אצלכם מערכת פנימית עם API — ניהול רכיבים, מסד תוצאות בדיקה — ואין לה קונקטור מוכן, <strong>MCP הוא המסלול</strong>. זו לא לחיצת כפתור אלא פרויקט קטן ל-IT או למפתח, אבל שווה לדעת שהדלת קיימת ואיך היא נקראת.</p>
+      <p>ומשפט אחד של זהירות: שרת MCP הוא קוד שרץ עם גישה למערכות שלכם. להתקין רק ממקורות מוכרים ומאומתים — ואם מישהו שולח לכם "חיבור מגניב" להתקנה, זו בקשה שדורשת בדיקה, לא לחיצה.</p>
+    </div>
+
+    <div class="callout info">
+      <div class="callout-title">ℹ️ Hooks — אוטומציה שרצה מעצמה</div>
+      <p><strong>Hooks</strong> (מילולית "ווים") הם אוטומציה מבוססת-אירוע: "כשקורה X — הרץ אוטומטית Y". וזה ההבדל מ-Skill: Skill נשלף כשהבקשה מתאימה, כלומר הוא עדיין מגיב <em>לכם</em>; Hook לא מחכה לבקשה בכלל — הוא קשור לאירוע ורץ תמיד, גם כששכחתם שהוא קיים. זה כלי של <em>סביבות פיתוח</em> (Claude Code, Cursor), אז הוא לא לכולם — אבל שתי דוגמאות ממחישות למה שווה להכיר אותו:</p>
+      <ul>
+        <li><strong>התראה כשהסוכן סיים.</strong> האירוע: Claude גמר לעבוד. סוכן על משימה אמיתית רץ דקות (פרק 4) — ובמקום לבהות במסך או לחזור אליו באיחור, Hook שולח התראה או צליל, ואתם חוזרים כשזה מוכן.</li>
+        <li><strong>גיבוי לפני כל שינוי בקובץ.</strong> האירוע: לפני שClaude עורך קובץ. Hook מעתיק את המקור לתיקיית גיבוי עם חותמת זמן. למי שלא עובד עם ניהול גרסאות זו רשת הביטחון שהופכת את "לתת ל-Claude לגעת בקבצים שלי" להחלטה קלה.</li>
+      </ul>
+      <p>שימו לב לדפוס: בשתי הדוגמאות ה-Hook לא עושה שום עבודה הנדסית — הוא רק דואג שמשהו יקרה בזמן הנכון. ואת ההגדרה עצמה לא חייבים לכתוב לבד: מתארים ל-Claude מה שיקרה ומתי, והוא מכין אותה.</p>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-title">💡 הפרק בשני משפטים</div>
+      <p><strong>מה זה קונקטור:</strong> חיבור ישיר שנותן ל-Claude לגשת בעצמו למערכת שלכם (קודם כל מייל, ואם יש — מסמכים), במקום שתעתיקו-תדביקו.</p>
+      <p><strong>הכלל היחיד לזכור:</strong> Claude קורא, מסכם ומנסח כמה שתרצו — אבל פעולות בלתי-הפיכות כמו שליחת מייל נשארות ללחיצה שלכם.</p>
+    </div>
+
+    <hr>
+
+    <!-- ====== CHAPTER 6 ====== -->
+    <h1 id="ch6">פרק 6: מתי <em>לא</em> לסמוך על ה-AI</h1>
+    <p>יש עיקרון אחד שמסביר כמעט כל טעות ש-Claude יעשה, וכדאי לקחת אותו מהפרק הזה גם אם תשכחו את כל השאר: <strong>המודל לא סובל חלל ריק.</strong> כל חסר שהוא נתקל בו — מתמלא. חלק, מיד, ובדיוק באותו טון בטוח שבו הוא אומר דברים נכונים.</p>
+    <p>וזה עובד בכל הכיוונים. חסר ב<em>ידע</em> שלו ← הוא ממציא עובדה שנשמעת נכונה (הזיה). חסר ב<em>בקשה</em> שלכם ← הוא בוחר פרשנות ורץ איתה, בלי לספר לכם. חסר בין מה שהוא יודע לבין מה שרמזתם שתרצו לשמוע ← הוא מסכים אתכם. חסר באמצע שרשרת חישוב ← נכנס מספר שנראה בסדר גמור. ההשלמה תמיד חלקה — וזו בדיוק הבעיה: <strong>מילוי החסר לא מרגיש שונה מתשובה אמיתית.</strong></p>
+    <p>את הבסיס כבר פגשתם — מהי הזיה (ראו "יסודות בקצרה" בפתיחה) וארבע הצרות של הלוח (טבלת ההקדמה). כאן נכיר את ההשלמות שקשה יותר לתפוס, ואת הבדיקות שמחזירות לכם שליטה.</p>
+
+    <h2 id="ch6-1">6.1 שש דרכים שבהן המודל "משלים את החסר"</h2>
+    <p>הנה הקטלוג. השורה הראשונה היא ההזיה הקלאסית והמוכרת — היא כאן רק כעוגן; חמש האחרות הן החמקמקות, והן בדיוק אלה שממשיכות איתכם הלאה בלי שתשימו לב:</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>הדפוס</th><th>איך זה נראה</th><th>מה עושים</th></tr>
+        <tr>
+          <td><strong>הזיה קלאסית</strong><br><span style="color:var(--text-muted)">חסר בידע</span></td>
+          <td>עובדה, שם או מקור שפשוט לא קיימים — מנוסחים בביטחון מלא</td>
+          <td>לבקש מקור, ולפתוח אותו (6.2)</td>
+        </tr>
+        <tr>
+          <td><strong>מידע מיושן</strong><br><span style="color:var(--text-muted)">חסר בזמן</span></td>
+          <td>תשובה נכונה — לגבי המצב לפני שנתיים</td>
+          <td>בכל מה שמשתנה: לבקש חיפוש ברשת</td>
+        </tr>
+        <tr>
+          <td><strong>הנחות שקטות</strong><br><span style="color:var(--text-muted)">חסר בבקשה</span></td>
+          <td>תשובה מצוינת — לשאלה קצת אחרת מזו ששאלתם</td>
+          <td>לבקש לחזור על ההבנה <em>לפני</em> העבודה</td>
+        </tr>
+        <tr>
+          <td><strong>חנופה</strong><br><span style="color:var(--text-muted)">חסר בין אמת לרצוי</span></td>
+          <td>הסכמה עם הכיוון שרמזתם עליו, כולל נימוקים משכנעים</td>
+          <td>לא לגלות מראש מה אתם מקווים לשמוע</td>
+        </tr>
+        <tr>
+          <td><strong>"אבד באמצע"</strong><br><span style="color:var(--text-muted)">חסר בקשב</span></td>
+          <td>במסמך ארוך — ההתחלה והסוף נקלטים, האמצע נשמט</td>
+          <td>לפצל, ולשאול ממוקד על החלק החשוב</td>
+        </tr>
+        <tr>
+          <td><strong>חישוב שנשמע מחושב</strong><br><span style="color:var(--text-muted)">חסר בשרשרת</span></td>
+          <td>הסבר נכון לגמרי — ומספר סופי שגוי</td>
+          <td>את המספר שקובע משהו — לחשב פעם אחת בעצמכם</td>
+        </tr>
+      </table>
+    </div>
+    <p>שניים מהדפוסים האלה שווים מבט מקרוב, כי הם היחידים שבהם <em>אין שום סימן חיצוני</em> שמשהו השתבש.</p>
+
+    <h3>חנופה — כשהמודל מסכים אתכם יותר מדי</h3>
+    <p>למודלי שפה יש הטיה מובנית שנקראת <strong>חנופה</strong> (Sycophancy): כשהניסוח שלכם מסגיר מה אתם חושבים — או מה תשמחו לשמוע — המודל נוטה ליישר קו אתכם, גם במקום שבו מגיעה ביקורת. זו לא "נימוסים" שאפשר להתעלם מהם; זה משנה את <em>התוכן</em> של התשובה. שימו לב לשני ניסוחים של אותה שאלה בדיוק:</p>
+    <ul>
+      <li><em>"קראתי את ההצעה, ואני די בטוח שהיא לא ריאלית בלוח הזמנים — נכון?"</em> ← סביר שתקבלו אישור, עם שלוש סיבות מצוינות למה צדקתם.</li>
+      <li><em>"לפניך הצעה. מה חזק בה, מה חלש בה, ומה הסיכון המרכזי?"</em> ← תקבלו ניתוח. ייתכן שלוח הזמנים בכלל לא יופיע בו.</li>
+    </ul>
+    <div class="callout tip">
+      <div class="callout-title">💡 העובד החדש שרוצה לרצות</div>
+      <p>דמיינו עובד חדש, מוכשר ולהוט להרשים. כשהבוס פותח ב"נראה לי שהבעיה ב-X, נכון?" — הסיכוי שהוא יתעקש על ההפך שואף לאפס. Claude הוא בדיוק העובד הזה. אם אתם רוצים ממנו אמת ולא אישור — אל תגלו לו מראש מה אתם מקווים לשמוע.</p>
+    </div>
+    <div class="callout prompt">
+      <div class="callout-title">💬 פרומפט נגד חנופה</div>
+      <p><em>"אל תניח שאני צודק. זו ההשערה שלי: [ההשערה]. תקוף אותה — מה היה סותר אותה, ומה ההסבר החלופי הכי חזק?"</em></p>
+      <p>וכלל אצבע: אם המודל הסכים אתכם לאורך שיחה שלמה, זה סימן שאלה — לא הישג.</p>
+    </div>
+
+    <h3>הנחות שקטות — תשובה מצוינת לשאלה אחרת</h3>
+    <p>זו ההשלמה הכי חמקמקה, כי היא <strong>עוברת כל בדיקת עובדות</strong>. הבקשה שלכם השאירה חור — לא ציינתם למי זה מיועד, באיזה היקף, לאיזו מטרה — והמודל, שלא סובל חלל ריק, בחר בשקט את הפרשנות הסבירה ביותר והמשיך. כל עובדה בתשובה יכולה להיות נכונה לחלוטין; היא פשוט עונה על שאלה שלא שאלתם.</p>
+    <p>ביקשתם "סיכום קצר של המסמך"? המודל החליט לבד מה "קצר", ומה בכלל ראוי להיכנס לסיכום. ביקשתם "הצעה לתהליך"? הוא הניח היקף, קהל ולוח זמנים. הסיכון האמיתי הוא שההנחות האלה <em>נטמעות</em> בתוצר, ואתם ממשיכים לבנות עליהן — בלי שאיש אמר לכם שהן שם.</p>
+    <p>התרופה קלה, ולוקחת 20 שניות: <strong>לעצור את המודל לפני שהוא מתחיל.</strong> אותו הרגל בדיוק כמו הפרדה בין הוראה לחומר (2.3) — רק שהפעם מוודאים שהבקשה עצמה הובנה.</p>
+    <div class="callout prompt">
+      <div class="callout-title">💬 שאלת העצירה — לפני כל משימה משמעותית</div>
+      <p><em>"לפני שתתחיל: נסח במשפט אחד מה הבנת שאני מבקש, ופרט אילו הנחות אתה נאלץ להניח כי לא אמרתי. אל תתחיל לעבוד עד שאאשר."</em></p>
+      <p>רוב הפעמים תאשרו ותמשיכו. הפעמים שבהן תגלו שהוא הבין משהו אחר לגמרי — הן אלה ששוות את 20 השניות.</p>
+    </div>
+
+    <div class="callout warning">
+      <div class="callout-title">⚠️ טון בטוח ≠ נכון</div>
+      <p>הביטחון בניסוח לא נושא שום מידע על נכונות התשובה: Claude מנסח טעות באותה שלווה בדיוק שבה הוא מנסח אמת. לכן "זה נשמע משכנע" הוא לא אות לכלום — כל שש ההשלמות שבטבלה לובשות את אותו הטון. האות היחיד שנחשב: בדיקה מול משהו מחוץ למודל. איך עושים את זה מהר — הסעיף הבא.</p>
+    </div>
+
+    <h2 id="ch6-2">6.2 מה כן לבדוק — ואיך לבדוק מהר</h2>
+    <p>נתחיל מהבשורה הטובה: <strong>לא צריך לבדוק הכול.</strong> ברוב מה ש-Claude מייצר — ניסוחים, רעיונות, הסברים — טעות פשוט נראית לעין תוך כדי קריאה. הבדיקה נחוצה במקומות שבהם ההשלמה <strong>שקטה</strong>: לא בולטת, נשמעת מצוין, וממשיכה אתכם הלאה. שישה מקומות כאלה — ולכל אחד בדיקה קצרה:</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>מה קיבלתם</th><th>הבדיקה המהירה</th></tr>
+        <tr>
+          <td><strong>עובדה או מספר</strong><br><span style="color:var(--text-muted)">שם, תאריך, נתון, ערך</span></td>
+          <td>מקור אחד מחוץ ל-Claude. הכי קל: לבקש מראש <em>"ציין מקור לכל נתון"</em> — ואז באמת לפתוח אותו, לא רק להנהן לו.</td>
+        </tr>
+        <tr>
+          <td><strong>כל דבר שמשתנה בזמן</strong><br><span style="color:var(--text-muted)">מחיר, גרסה, תקן, מי אחראי על מה</span></td>
+          <td>אל תסתמכו על הזיכרון שלו — בקשו במפורש <em>"חפש ברשת ותן לי מקור עדכני"</em>. בלי הבקשה הזו, התשובה עלולה לתאר את העולם של לפני שנתיים (6.1).</td>
+        </tr>
+        <tr>
+          <td><strong>תוצאה של חישוב</strong></td>
+          <td>את המספר שבאמת קובע משהו — חשבו פעם אחת בעצמכם. דקה של מחשבון מול שעה של תיקונים.</td>
+        </tr>
+        <tr>
+          <td><strong>סיכום של חומר שאתם נתתם</strong></td>
+          <td>סיכום נוטה פחות להמציא מאשר לשאלות פתוחות — אבל הוא עלול גם <em>להשמיט</em> וגם להמציא, במיוחד מהאמצע. ודאו ש-2–3 הנקודות שהכי חשובות <em>לכם</em> אכן נכנסו.</td>
+        </tr>
+        <tr>
+          <td><strong>מידע מהרשת</strong><br><span style="color:var(--text-muted)">כולל דוח Deep Research</span></td>
+          <td>פתחו 2–3 מהמקורות וראו במו עיניכם שהם אומרים את מה שמיוחס להם (כמו ב-4.5). דוח מסודר עדיין לא אומר שהמקורות אמרו את זה.</td>
+        </tr>
+        <tr>
+          <td><strong>קוד או סקריפט</strong></td>
+          <td>ההרצה היא הבדיקה — על דוגמה שאתם כבר יודעים מה אמורה להיות תשובתה.</td>
+        </tr>
+      </table>
+    </div>
+
+    <h3>הבודק הכי טוב — מי שלא היה בחדר</h3>
+    <p>אפשר לבקש מ-Claude לבדוק את עצמו (2.6), וזה באמת עוזר. אבל יש לזה תקרה שמוכרת לכל מי שניסה להגיה טקסט שהוא עצמו כתב: מי שכתב קורא את מה שהוא <em>התכוון</em> לכתוב, לא את מה שכתוב בפועל. אותו דבר קורה ל-Claude מול הלוח של השיחה — ההנחות השקטות שהוא הניח בהתחלה כתובות עליו, והוא קורא אותן כעובדות.</p>
+    <p>לכן, כשהתוצאה חשובה — עשו <strong>אימות צולב</strong>: פתחו שיחה חדשה, הדביקו רק את התוצר הסופי (בלי ההיסטוריה), ובקשו לחפש טעויות. הבודק הזה לא היה בחדר — ולכן לא ירש את ההנחות שהובילו לתוצר. רוצים עוד שכבה? מודל אחר לגמרי (2.9).</p>
+    <div class="callout prompt">
+      <div class="callout-title">💬 פרומפט הבודק הנקי</div>
+      <p><em>"הנה ניתוח שקיבלתי: [הדבקה]. אל תניח שהוא נכון. חפש טעויות עובדתיות, חישוביות ולוגיות, וציין כל טענה שכדאי לבדוק מול מקור."</em></p>
+      <p>שימו לב לניסוח "שקיבלתי" — לא מגלים לבודק מי כתב, כדי שלא יגן על עבודה של עצמו (וכדי שלא יחניף לכם).</p>
+    </div>
+    <div class="callout exercise">
+      <div class="callout-title">🧪 נסו בעצמכם (2 דקות): לתפוס השלמה על חם</div>
+      <p>(1) בחרו נושא שאתם מכירים לעומק — תחביב, סדרה נישתית, ההיסטוריה של העיר שלכם — ושאלו שאלה מפרטית שאתם <em>יודעים</em> את תשובתה. (2) השוו למה שאתם יודעים. טעה בביטחון מלא? שאלו: <em>"מאיפה זה? ציין מקור"</em> — וצפו בנסיגה. (3) פתחו שיחה חדשה ושאלו שוב, הפעם עם השורה מ-2.4: <em>"אם אינך בטוח, אמור שאינך יודע."</em> <strong>הצלחתם אם</strong> ראיתם את ההבדל בין ניחוש בטוח ל"אין לי את הנתון" — כי מעכשיו תזהו את הטון הזה גם בנושאים שאתם <em>לא</em> מכירים.</p>
+    </div>
+
+    <h2 id="ch6-3">6.3 השורה התחתונה</h2>
+    <p>אז לסמוך או לא? זו שאלה לא נכונה — כי אמון ב-Claude הוא לא מתג של כן/לא. הוא נבנה בהדרגה ו<strong>לפי סוג משימה</strong>, בדיוק כמו עם אותו עובד חדש: בהתחלה עוברים על כל מה שהוא מגיש; אחרי שכמה עבודות מאותו סוג חזרו טובות — עוברים לבדיקות המהירות של 6.2; וכשהוא לוקח משהו מסוג <em>חדש</em> — חוזרים לבדוק מקרוב. חודש מוצלח של ניסוח מיילים לא מבטיח כלום לגבי מספרים, וזה בסדר גמור. ורק דבר אחד לא יורד לעולם לאפס: איפה שטעות עולה ביוקר, בודקים — גם אחרי שנה.</p>
+    <div class="callout tip">
+      <div class="callout-title">💡 שאלת הבטן — לפני שתוצר ממשיך הלאה</div>
+      <p>משהו ש-Claude כתב עומד לצאת מכם החוצה — למייל, למסמך, להחלטה? עצרו לשנייה ושאלו: <strong>"הייתי שולח את זה כמו שהוא, אילו כתב אותו עובד שהתחיל החודש?"</strong> אם כן — קדימה. אם הבטן אומרת "רגע, את <em>זה</em> הייתי בודק" — זו בדיוק הנקודה שחוזרים איתה ל-6.2.</p>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-title">💡 הפרק בשני משפטים</div>
+      <p><strong>מה לזכור:</strong> המודל לא סובל חלל ריק — הוא ממלא כל חסר, בטון בטוח, ובלי להודיע לכם.</p>
+      <p><strong>מה לעשות:</strong> לסגור את החורים מראש (מקור, עדכניות, הבנת הבקשה) — ולבדוק מבחוץ את מה שטעות בו עולה ביוקר.</p>
+    </div>
+
+    <hr>
+
+    <!-- ====== CHAPTER 7 ====== -->
+    <div class="chapter-cursor">
+      <h1 id="ch7">פרק 7: מעבדה — בונים Skill מאפס</h1>
+      <p>הפרק הזה הוא תרגול מעשי: בונים Skill אמיתי מההתחלה ועד הסוף — בונים, מריצים, שוברים, מתקנים. עשו אותו בקצב שלכם, מול מקלדת פתוחה; כל צעד כתוב כאן במלואו, כך שאפשר לעבור אותו לבד בלי שאף שלב יישאר בגדר הנחה.</p>
+      <div class="callout info">
+        <div class="callout-title">🎯 מהלך המעבדה</div>
+        <p>7.1 המשימה · 7.2 קודם ידנית · 7.3 בונים את ה-Skill · 7.4 שוברים ומתקנים</p>
+      </div>
+    </div>
+
+    <h2 id="ch7-1">7.1 המשימה: מחפשים רכיב לפי דרישות</h2>
+    <p>המצב המוכר: צריך רכיב חדש לתכן. יש דרישות ברורות — ומתחיל מסע: אתרי יצרנים, אתרי מפיצים, טבלאות השוואה שכל אחת בנויה אחרת. שעה עוברת, ויש ביד שלושה טאבים פתוחים ובלגן.</p>
+    <p>מה שאנחנו רוצים במקום: לכתוב את הדרישות בשורה אחת — ולקבל 3–5 מועמדים מהשוק, מסודרים בטבלת השוואה אחת קבועה, עם קישור למקור ליד כל ערך.</p>
+    <p>בדיקה מול המבחן של 3.3: חוזר שוב ושוב? כן — כל תכן חדש. אותה שיטה? כן — תמיד דרישות מול פרמטרים. עקביות חשובה? כן — טבלה קבועה מאפשרת להשוות גם בין חיפושים. ידע ששווה לשמר? כן — רשימת הפרמטרים שחשובים לצוות היא בדיוק ידע כזה. ארבע מתוך ארבע — בונים.</p>
+
+    <h2 id="ch7-2">7.2 קודם ידנית — פרומפט חד-פעמי</h2>
+    <p>כמו תמיד (3.3): לפני שאורזים, בודקים שהמשימה עובדת בשיחה רגילה (רק ודאו קודם שחיפוש ברשת מופעל בתפריט הכלים של תיבת ההקלדה, כמו ב-4.5):</p>
+    <div class="callout prompt">
+      <div class="callout-title">💬 הסיבוב הידני</div>
+      <p>"אני מחפש רגולטור מתח: כניסה עד 12V, יציאה 3.3V, לפחות 500mA, טווח טמפרטורה תעשייתי (<span dir="ltr">-40°C</span> עד <span dir="ltr">+85°C</span>). תמצא 3–5 מועמדים והשווה אותם בטבלה — עמודה לכל מועמד, ושורות: מק"ט ויצרן, מתח כניסה, מתח יציאה, זרם מקסימלי, טווח טמפרטורה, מארז. ליד כל ערך — קישור ל-Datasheet של היצרן."</p>
+    </div>
+    <p>אחרי דקה-שתיים של חיפוש — יוצאת טבלה עם מועמדים אמיתיים. עובד. אבל את הפרומפט הזה, על כל הסעיפים שלו, אף אחד לא יזכור בעל-פה בפעם הבאה. בשביל זה יש Skill: הידע נשאר, ואתם כותבים רק את הדרישות.</p>
+
+    <h2 id="ch7-3">7.3 בונים את ה-Skill</h2>
+    <p>פותחים <strong>+ Create skill ← Create with Claude</strong> (המסלול מ-3.4), ומתארים בשפה רגילה:</p>
+    <div class="callout prompt">
+      <div class="callout-title">💬 מה שאומרים ל-Create with Claude</div>
+      <p>"תבנה לי Skill למציאת רכיבים: אני נותן דרישות, והוא מחפש ברשת 3–5 מועמדים ומשווה אותם בטבלה הקבועה של הצוות. שיופעל כשאני מתאר רכיב שאני מחפש או מבקש השוואת רכיבים. פרמטר שלא נמצא — 'לא צוין'. בלי המצאות. הפלט בעברית."</p>
+    </div>
+    <p>Claude מציג את הקובץ שכתב. קוראים אותו יחד לפני שמאשרים:</p>
+    <pre class="skillfile">---
+name: component-finder
+description: Finds 3-5 candidate components that meet the given
+  requirements and compares them in the team's standard table.
+  Use when I describe a component I am looking for, list
+  requirements, or ask to compare parts.
+---
+
+# Component Finder - Standard Comparison
+
+## Output - one table
+- One column per candidate (3-5 candidates)
+- Rows: part number + manufacturer, then one row per
+  requirement, then: package, availability
+- Sort by best fit first
+
+## Rules
+- Search the web for real, current parts
+- A parameter that was not found -> write "לא צוין"
+- Never invent a value
+- Write the output in Hebrew</pre>
+    <p>שורה אחת שווה עצירה: ה-<strong>description</strong> קובע מתי ה-Skill נשלף — "כשאני מתאר רכיב שאני מחפש". שומרים, פותחים שיחה חדשה, וכותבים רק: <em>"מחפש רגולטור, כניסה עד 12V, יציאה 3.3V, לפחות 500mA, טווח תעשייתי"</em>. בלי להסביר כלום על טבלאות. ה-Skill נשלף מעצמו — ואחרי החיפוש מתקבלת טבלת השוואה מסודרת.</p>
+
+    <h2 id="ch7-4">7.4 שוברים אותו — ומתקנים</h2>
+    <p>הטבלה נראית מצוין. עכשיו מסתכלים עליה כמו מהנדסים — ומוצאים שתי בעיות:</p>
+    <ul>
+      <li>אצל מועמד אחד כתוב זרם מרשים — <span dir="ltr">1A</span> — אבל <strong>בלי קישור למקור</strong>. מאיפה המספר? אולי מדף יצרן, אולי מפורום. אי אפשר לדעת.</li>
+      <li>מועמד אחר נראה תקין, אבל במבט שני טווח הטמפרטורה שלו הוא <span dir="ltr">0–70°C</span> — מסחרי, לא תעשייתי. <strong>הוא לא עומד בדרישה</strong> — ובכל זאת ישב בטבלה כאילו הכול בסדר.</li>
+    </ul>
+    <p>ה-Skill לא "שיקר" — הוא הביא מה שמצא. מה שחסר לו זה אימות. ושימו לב <em>איך</em> זה קרה: בסיבוב הידני (7.2) דווקא ביקשנו קישורים — אבל בתיאור שהכתבנו ל-Create with Claude שכחנו אותם. <strong>מה שלא נכנס לתיאור — לא נכנס ל-Skill.</strong> פותחים אותו לעריכה ומוסיפים שני כללים:</p>
+    <pre class="skillfile">## Rules (added after the break)
+- Every value must link to the manufacturer's datasheet.
+  A value without a source -> mark "לא אומת"
+- Add a final row: "עומד בכל הדרישות: כן / לא" -
+  checked requirement by requirement, not by impression</pre>
+    <p>מריצים שוב את אותה בקשה. הפעם: ה-<span dir="ltr">1A</span> מסומן "לא אומת", ולמועמד המסחרי כתוב בשורה האחרונה "עומד בכל הדרישות: <strong>לא</strong> (טמפרטורה)". עכשיו זו טבלה שאפשר לעבוד איתה: כל ערך ניתן לבדיקה בקליק, וכל מועמד נבחן מול כל דרישה. <strong>זה ההבדל בין Skill שמביא מידע לבין Skill שסומכים עליו</strong> — והוא נבנה בדיוק כאן, בשלב השבירה.</p>
+
+    <hr>
+
+    <!-- ====== GLOSSARY ====== -->
+    <h1 id="glossary">נספח: מילון מונחים</h1>
+    <p>כל מונחי ה-AI שבערכה במקום אחד — לקריאה לא-לינארית ולחזרה מהירה בזמן עבודה. העמודה הימנית מפנה לפרק שבו המונח נדון לעומק. מונחי החומרה (ICT, netlist, mil) לא כאן — שם המומחים אתם.</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>המונח</th><th>בקצרה</th><th>איפה</th></tr>
+        <tr><td><strong>מודל (Model)</strong></td><td>"המנוע" שעונה לכם, בשלושה גדלים: Haiku (מהיר), Sonnet (ברירת המחדל), Opus (החזק)</td><td style="white-space:nowrap; color:var(--text-muted);">יסודות</td></tr>
+        <tr><td><strong>Effort</strong></td><td>בקרה על כמה מאמץ המודל משקיע בתשובה — יותר מאמץ, יותר זמן וצריכה</td><td style="white-space:nowrap; color:var(--text-muted);">יסודות</td></tr>
+        <tr><td><strong>Extended Thinking</strong></td><td>מצב חשיבה מורחב: המודל מנתח לעומק לפני שהוא עונה; מייתר את "חשוב צעד-צעד"</td><td style="white-space:nowrap; color:var(--text-muted);">יסודות · 2.7</td></tr>
+        <tr><td><strong>מכסת שימוש (Usage Limit)</strong></td><td>כמות השימוש שהתוכנית מאפשרת בחלון זמן; סוכנים ומקביליות צורכים ממנה יותר</td><td style="white-space:nowrap; color:var(--text-muted);">יסודות · 4.2</td></tr>
+        <tr><td><strong>Project</strong></td><td>תיקיית עבודה בצ'אט: קבוצת שיחות סביב נושא, עם הקשר וקבצים קבועים</td><td style="white-space:nowrap; color:var(--text-muted);">יסודות · 3.1</td></tr>
+        <tr><td><strong>חלון הקשר (Context Window)</strong></td><td>"הלוח המחיק": כל מה ש-Claude רואה בשיחה הנוכחית — וזה כל מה שיש לו</td><td style="white-space:nowrap; color:var(--text-muted);">הקדמה</td></tr>
+        <tr><td><strong>טוקן (Token)</strong></td><td>יחידת המקום על הלוח; בערך מילה או חלק ממנה</td><td style="white-space:nowrap; color:var(--text-muted);">הקדמה</td></tr>
+        <tr><td><strong>דחיסה (Compact)</strong></td><td>החלפת היסטוריית השיחה בסיכום שלה — הלוח מתפנה, פרטים עלולים ללכת לאיבוד</td><td style="white-space:nowrap; color:var(--text-muted);">הקדמה</td></tr>
+        <tr><td><strong>זיכרון (Memory)</strong></td><td>פריטים שנשמרים מהשיחות ומתעדכנים תוך כדי — העדפות ועובדות עליכם, לא החלטות</td><td style="white-space:nowrap; color:var(--text-muted);">הקדמה</td></tr>
+        <tr><td><strong>CLAUDE.md</strong></td><td>קובץ זיכרון בכלי פיתוח, נטען אוטומטית בתחילת סשן — קיים ברמה ארגונית, פרויקט ואישית</td><td style="white-space:nowrap; color:var(--text-muted);">הקדמה</td></tr>
+        <tr><td><strong>סיכום מסירה (Handoff)</strong></td><td>פתק ש-Claude כותב בסוף סשן, ומדביקים כפתיחה של הסשן הבא</td><td style="white-space:nowrap; color:var(--text-muted);">הקדמה</td></tr>
+        <tr><td><strong>הזיה (Hallucination)</strong></td><td>השלמת פער בניחוש שנשמע בטוח לחלוטין</td><td style="white-space:nowrap; color:var(--text-muted);">הקדמה · פרק 6</td></tr>
+        <tr><td><strong>הזרקת פרומפט (Prompt Injection)</strong></td><td>"הוראות" נסתרות בתוך תוכן שאתם מצרפים</td><td style="white-space:nowrap; color:var(--text-muted);">הקדמה · 3.5 · 4.4</td></tr>
+        <tr><td><strong>פרומפט (Prompt)</strong></td><td>ההנחיה שאתם נותנים ל-Claude</td><td style="white-space:nowrap; color:var(--text-muted);">1.2</td></tr>
+        <tr><td><strong>תפקיד (Persona)</strong></td><td>מאיזו עמדה Claude עונה — מכוון רמה וטון</td><td style="white-space:nowrap; color:var(--text-muted);">1.3</td></tr>
+        <tr><td><strong>למידה מדוגמאות (Few-shot)</strong></td><td>להראות דוגמה של הפלט הרצוי במקום לתאר אותו במילים</td><td style="white-space:nowrap; color:var(--text-muted);">2.1</td></tr>
+        <tr><td><strong>שרשרת מחשבה (Chain-of-Thought)</strong></td><td>"חשוב צעד-צעד"; ב-Claude לרוב מיותר</td><td style="white-space:nowrap; color:var(--text-muted);">2.7</td></tr>
+        <tr><td><strong>Skill</strong></td><td>נוהל ארוז בקובץ, ש-Claude שולף אוטומטית כשהבקשה מתאימה</td><td style="white-space:nowrap; color:var(--text-muted);">פרק 3</td></tr>
+        <tr><td><strong>SKILL.md</strong></td><td>הקובץ שבו ה-Skill כתוב: name, description, והוראות</td><td style="white-space:nowrap; color:var(--text-muted);">3.1</td></tr>
+        <tr><td><strong>Markdown</strong></td><td>כתיבת מסמך מעוצב בסימנים פשוטים (# לכותרת, - לרשימה)</td><td style="white-space:nowrap; color:var(--text-muted);">3.1</td></tr>
+        <tr><td><strong>דטרמיניסטי (Deterministic)</strong></td><td>אותו קלט ← אותו פלט, כל עוד הסקריפט והסביבה זהים; ב-Skill זה מגיע מהסקריפט, לא מההוראות</td><td style="white-space:nowrap; color:var(--text-muted);">3.2</td></tr>
+                                                <tr><td><strong>סוכן (Agent)</strong></td><td>Claude שרץ בלולאה — חשוב · פעל · צפה — עד השגת המטרה</td><td style="white-space:nowrap; color:var(--text-muted);">4.1</td></tr>
+                <tr><td><strong>תת-סוכן (Subagent)</strong></td><td>עוזר שנולד למשימה אחת, עם לוח נקי משלו</td><td style="white-space:nowrap; color:var(--text-muted);">4.2</td></tr>
+        <tr><td><strong>Deep Research</strong></td><td>מצב מחקר: עשרות חיפושים במקביל ← דוח מסודר עם מקורות</td><td style="white-space:nowrap; color:var(--text-muted);">4.1</td></tr>
+        <tr><td><strong>Guardrails</strong></td><td>גבולות שמונעים מטעות של סוכן להפוך לנזק</td><td style="white-space:nowrap; color:var(--text-muted);">4.4</td></tr>
+        <tr><td><strong>הרעלת הקשר (Context Poisoning)</strong></td><td>טעות מוקדמת — הנחה שגויה, קובץ לא נכון — שנשארת על הלוח ומשפיעה על כל ההמשך; שיחה מורעלת לא מבריאה לבד</td><td style="white-space:nowrap; color:var(--text-muted);">הקדמה</td></tr>
+        <tr><td><strong>זיהום הקשר (Context Pollution)</strong></td><td>הלוח מתמלא בחומר שכבר לא רלוונטי, והמודל מאבד פוקוס — הסיבה שתת-סוכן מקבל לוח נפרד. (המונח הרחב לתופעה בספרות: <em>context rot</em>)</td><td style="white-space:nowrap; color:var(--text-muted);">4.2</td></tr>
+        <tr><td><strong>וריאציות מקבילות</strong></td><td>אותה משימה בכמה גישות בבת אחת — ואתם בוחרים (מוכר גם כ-<em>best-of-N</em>)</td><td style="white-space:nowrap; color:var(--text-muted);">4.2</td></tr>
+        <tr><td><strong>הרשאות מינימליות (Least Privilege)</strong></td><td>לתת לסוכן רק את הגישה שהמשימה דורשת — בטיחות, וגם דיוק</td><td style="white-space:nowrap; color:var(--text-muted);">4.4</td></tr>
+        <tr><td><strong>diff / commit</strong></td><td>רשימת השינויים המדויקת / שמירתם המקומית — לצוות הם מגיעים רק אחרי push</td><td style="white-space:nowrap; color:var(--text-muted);">4.4</td></tr>
+                <tr><td><strong>קונקטור (Connector)</strong></td><td>שקע ישיר של Claude למערכת שלכם (מייל, מסמכים)</td><td style="white-space:nowrap; color:var(--text-muted);">פרק 5</td></tr>
+        <tr><td><strong>MCP</strong></td><td>התקן שמאחורי הקונקטורים — "ה-USB-C של החיבורים"; קונקטור הוא בפועל שרת MCP (גם מקומי), וזה גם המסלול לחיבור מערכת פנימית שאין לה קונקטור מוכן</td><td style="white-space:nowrap; color:var(--text-muted);">5.3</td></tr>
+        <tr><td><strong>Hooks</strong></td><td>אוטומציה מבוססת-אירוע ("כשקורה X ← הרץ Y") — רץ תמיד ומעצמו, בשונה מ-Skill שנשלף לפי הבקשה; בעיקר בכלי פיתוח</td><td style="white-space:nowrap; color:var(--text-muted);">5.3</td></tr>
+        <tr><td><strong>חנופה (Sycophancy)</strong></td><td>נטיית המודל להסכים אתכם ולאשר את הכיוון שרמזתם עליו</td><td style="white-space:nowrap; color:var(--text-muted);">6.1</td></tr>
+        <tr><td><strong>הנחות שקטות</strong></td><td>המודל משלים בעצמו פרטים שחסרו בבקשה — בלי לומר זאת</td><td style="white-space:nowrap; color:var(--text-muted);">6.1</td></tr>
+        <tr><td><strong>"אבד באמצע"</strong></td><td>במסמך ארוך, האמצע נקלט חלש יותר מההתחלה והסוף</td><td style="white-space:nowrap; color:var(--text-muted);">6.1</td></tr>
+        <tr><td><strong>אימות צולב</strong></td><td>בדיקת תוצר בשיחה נקייה (או במודל אחר) שלא ראתה את התהליך</td><td style="white-space:nowrap; color:var(--text-muted);">6.2</td></tr>
+      </table>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // Scrollspy – מדגיש את הפרק הנוכחי בתוכן העניינים
+  const links = document.querySelectorAll('.toc a');
+  const map = {};
+  links.forEach(a => { const id = a.getAttribute('href').slice(1); map[id] = a; });
+  const targets = Object.keys(map).map(id => document.getElementById(id)).filter(Boolean);
+
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(a => a.classList.remove('active'));
+        const a = map[e.target.id];
+        if (a) a.classList.add('active');
+      }
+    });
+  }, { rootMargin: '0px 0px -75% 0px', threshold: 0 });
+
+  targets.forEach(t => obs.observe(t));
+
+// TOC toggle — מסכים צרים בלבד (הכפתור מוסתר ב-CSS במסך רחב)
+const toc = document.querySelector('.toc');
+const tocBtn = document.createElement('button');
+tocBtn.className = 'toc-toggle';
+tocBtn.type = 'button';
+tocBtn.textContent = 'תוכן עניינים';
+toc.insertBefore(tocBtn, toc.firstChild);
+tocBtn.addEventListener('click', () => toc.classList.toggle('open'));
+toc.querySelectorAll('a').forEach(a =>
+  a.addEventListener('click', () => toc.classList.remove('open')));
+</script>
+</body>
+</html>
