@@ -864,7 +864,7 @@
     </div>
     <div class="callout tip">
       <div class="callout-title">💡 שרשרת מחשבה (Chain-of-Thought) — ולמה לרוב לא תצטרכו אותה</div>
-      <p>זו הטכניקה הקלאסית של "בקש מהמודל לחשוב צעד אחר צעד". ב-Claude היא לרוב מיותרת: כשמצב החשיבה (Extended Thinking — ראו "יסודות בקצרה" בפתיחה) פעיל, את עומק החשיבה הוא מנהל פנימית ואין צורך לכתוב "ענה שלב אחר שלב". כשהמצב כבוי — בקשה לעבוד בשלבים עדיין עוזרת במשימות מורכבות. מתי כן שווה? כשאתם רוצים <em>לראות</em> את ההיגיון כדי לאמת או ללמוד — אז בקשו "פרט איך הגעת לתשובה".</p>
+      <p>זו הטכניקה הקלאסית של "בקש מהמודל לחשוב צעד אחר צעד". ב-Claude היא לרוב מיותרת: כשמצב החשיבה המורחב (Extended Thinking — ראו במילון המונחים) פעיל, את עומק החשיבה הוא מנהל פנימית ואין צורך לכתוב "ענה שלב אחר שלב". כשהמצב כבוי — בקשה לעבוד בשלבים עדיין עוזרת במשימות מורכבות. מתי כן שווה? כשאתם רוצים <em>לראות</em> את ההיגיון כדי לאמת או ללמוד — אז בקשו "פרט איך הגעת לתשובה".</p>
     </div>
 
     <h2 id="ch2-6">2.8 לבקש מ-Claude לנסח את הפרומפט</h2>
@@ -1640,7 +1640,7 @@ description: Extracts follow-up tasks from a meeting transcript. Use when a
     <h1 id="ch6">פרק 6: מתי <em>לא</em> לסמוך על ה-AI</h1>
     <p>יש עיקרון אחד שמסביר כמעט כל טעות ש-Claude יעשה, וכדאי לקחת אותו מהפרק הזה גם אם תשכחו את כל השאר: <strong>המודל לא סובל חלל ריק.</strong> כל חסר שהוא נתקל בו — מתמלא. חלק, מיד, ובדיוק באותו טון בטוח שבו הוא אומר דברים נכונים.</p>
     <p>וזה עובד בכל הכיוונים. חסר ב<em>ידע</em> שלו ← הוא ממציא עובדה שנשמעת נכונה (הזיה). חסר ב<em>בקשה</em> שלכם ← הוא בוחר פרשנות ורץ איתה, בלי לספר לכם. חסר בין מה שהוא יודע לבין מה שרמזתם שתרצו לשמוע ← הוא מסכים אתכם. חסר באמצע שרשרת חישוב ← נכנס מספר שנראה בסדר גמור. ההשלמה תמיד חלקה — וזו בדיוק הבעיה: <strong>מילוי החסר לא מרגיש שונה מתשובה אמיתית.</strong></p>
-    <p>את הבסיס כבר פגשתם — מהי הזיה (ראו "יסודות בקצרה" בפתיחה) וארבע הצרות של הלוח (טבלת ההקדמה). כאן נכיר את ההשלמות שקשה יותר לתפוס, ואת הבדיקות שמחזירות לכם שליטה.</p>
+    <p>את הבסיס כבר פגשתם בטבלת הצרות של הלוח בהקדמה (הזיות, בלבול והרעלת הקשר). כאן נכיר את ההשלמות שקשה יותר לתפוס, ואת הבדיקות שמחזירות לכם שליטה.</p>
 
     <h2 id="ch6-1">6.1 שש דרכים שבהן המודל "משלים את החסר"</h2>
     <p>הנה הקטלוג. השורה הראשונה היא ההזיה הקלאסית והמוכרת — היא כאן רק כעוגן; חמש האחרות הן החמקמקות, והן בדיוק אלה שממשיכות איתכם הלאה בלי שתשימו לב:</p>
@@ -1847,11 +1847,11 @@ description: Finds 3-5 candidate components that meet the given
     <div class="table-wrap">
       <table>
         <tr><th>המונח</th><th>בקצרה</th><th>איפה</th></tr>
-        <tr><td><strong>מודל (Model)</strong></td><td>"המנוע" שעונה לכם, בשלושה גדלים: Haiku (מהיר), Sonnet (ברירת המחדל), Opus (החזק)</td><td style="white-space:nowrap; color:var(--text-muted);">יסודות</td></tr>
-        <tr><td><strong>Effort</strong></td><td>בקרה על כמה מאמץ המודל משקיע בתשובה — יותר מאמץ, יותר זמן וצריכה</td><td style="white-space:nowrap; color:var(--text-muted);">יסודות</td></tr>
-        <tr><td><strong>Extended Thinking</strong></td><td>מצב חשיבה מורחב: המודל מנתח לעומק לפני שהוא עונה; מייתר את "חשוב צעד-צעד"</td><td style="white-space:nowrap; color:var(--text-muted);">יסודות · 2.7</td></tr>
-        <tr><td><strong>מכסת שימוש (Usage Limit)</strong></td><td>כמות השימוש שהתוכנית מאפשרת בחלון זמן; סוכנים ומקביליות צורכים ממנה יותר</td><td style="white-space:nowrap; color:var(--text-muted);">יסודות · 4.2</td></tr>
-        <tr><td><strong>Project</strong></td><td>תיקיית עבודה בצ'אט: קבוצת שיחות סביב נושא, עם הקשר וקבצים קבועים</td><td style="white-space:nowrap; color:var(--text-muted);">יסודות · 3.1</td></tr>
+        <tr><td><strong>מודל (Model)</strong></td><td>"המנוע" שעונה לכם, בשלושה גדלים: Haiku (מהיר), Sonnet (ברירת המחדל), Opus (החזק)</td><td style="white-space:nowrap; color:var(--text-muted);">2.9</td></tr>
+        <tr><td><strong>Effort</strong></td><td>בקרה על כמה מאמץ המודל משקיע בתשובה — יותר מאמץ, יותר זמן וצריכה</td><td style="white-space:nowrap; color:var(--text-muted);">הקדמה</td></tr>
+        <tr><td><strong>Extended Thinking</strong></td><td>מצב חשיבה מורחב: המודל מנתח לעומק לפני שהוא עונה; מייתר את "חשוב צעד-צעד"</td><td style="white-space:nowrap; color:var(--text-muted);">2.7</td></tr>
+        <tr><td><strong>מכסת שימוש (Usage Limit)</strong></td><td>כמות השימוש שהתוכנית מאפשרת בחלון זמן; סוכנים ומקביליות צורכים ממנה יותר</td><td style="white-space:nowrap; color:var(--text-muted);">4.2</td></tr>
+        <tr><td><strong>Project</strong></td><td>תיקיית עבודה בצ'אט: קבוצת שיחות סביב נושא, עם הקשר וקבצים קבועים</td><td style="white-space:nowrap; color:var(--text-muted);">הקדמה · 3.1</td></tr>
         <tr><td><strong>חלון הקשר (Context Window)</strong></td><td>"הלוח המחיק": כל מה ש-Claude רואה בשיחה הנוכחית — וזה כל מה שיש לו</td><td style="white-space:nowrap; color:var(--text-muted);">הקדמה</td></tr>
         <tr><td><strong>טוקן (Token)</strong></td><td>יחידת המקום על הלוח; בערך מילה או חלק ממנה</td><td style="white-space:nowrap; color:var(--text-muted);">הקדמה</td></tr>
         <tr><td><strong>דחיסה (Compact)</strong></td><td>החלפת היסטוריית השיחה בסיכום שלה — הלוח מתפנה, פרטים עלולים ללכת לאיבוד</td><td style="white-space:nowrap; color:var(--text-muted);">הקדמה</td></tr>
